@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Objects in the MOO Database - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="objects-in-the-moo-database"><a class="header" href="#objects-in-the-moo-database">Objects in the MOO Database</a></h1>
+<p>There are anonymous objects and permanent objects in ToastStunt. Throughout this guide when we discuss <code>objects</code> we are typically referring to <code>permanent objects</code> and not <code>anonymous objects</code>. When discussing anonymous objects we will call them out specifically.</p>
+<p>Objects encapsulate state and behavior – as they do in other object-oriented programming languages. Permanent objects are also used to represent objects in the virtual reality, like people, rooms, exits, and other concrete things. Because of this, MOO makes a bigger deal out of creating objects than it does for other kinds of values, like integers.</p>
+<p>Numbers always exist, in a sense; you have only to write them down in order to operate on them. With permanent objects, it is different. The permanent object with number <code>#958</code> does not exist just because you write down its number. An explicit operation, the <code>create()</code> function described later, is required to bring a permanent object into existence. Once created, permanent objects continue to exist until they are explicitly destroyed by the <code>recycle()</code> function (also described later).</p>
+<p>Anonymous objects, which are also created using <code>create()</code>, will continue to exist until the <code>recycle()</code> function is called or until there are no more references to the anonymous object.</p>
+<p>The identifying number associated with a permanent object is unique to that object. It was assigned when the object was created and will never be reused unless <code>recreate()</code> or <code>reset_max_object()</code> are called. Thus, if we create an object and it is assigned the number <code>#1076</code>, the next object to be created (using <code>create()</code> will be assigned <code>#1077</code>, even if <code>#1076</code> is destroyed in the meantime.</p>
+<blockquote>
+<p>Note: The above limitation led to design of systems to manage object reuse. The <code>$recycler</code> is one example of such a system. This is <strong>not</strong> present in the <code>minimal.db</code> which is included in the ToastStunt source, however it is present in the latest dump of the <a href="https://github.com/lisdude/toastcore">ToastCore DB</a> which is the recommended starting point for new development.</p>
+</blockquote>
+<p>Anonymous and permanent objects are made up of three kinds of pieces that together define its behavior: <em>attributes</em>, <em>properties</em>, and <em>verbs</em>.</p>
+<h2 id="fundamental-object-attributes"><a class="header" href="#fundamental-object-attributes">Fundamental Object Attributes</a></h2>
+<p>There are three fundamental <em>attributes</em> to every object:</p>
+<ol>
+<li>A flag representing the built-in properties allotted to the object.</li>
+<li>A list of object that are its parents</li>
+<li>A list of the objects that are its <em>children</em>; that is, those objects for which this object is their parent.</li>
+</ol>
+<p>The act of creating a character sets the player attribute of an object and only a wizard (using the function <code>set_player_flag()</code>) can change that setting. Only characters have the player bit set to 1. Only permanent objects can be players.</p>
+<p>The parent/child hierarchy is used for classifying objects into general classes and then sharing behavior among all members of that class. For example, the ToastCore database contains an object representing a sort of "generic" room. All other rooms are <em>descendants</em> (i.e., children or children's children, or ...) of that one. The generic room defines those pieces of behavior that are common to all rooms; other rooms specialize that behavior for their own purposes. The notion of classes and specialization is the very essence of what is meant by <em>object-oriented</em> programming.</p>
+<p>Only the functions <code>create()</code>, <code>recycle()</code>, <code>chparent()</code>, <code>chparents()</code>, <code>renumber()</code> and <code>recreate()</code> can change the parent and children attributes.</p>
+<p>Below is the table representing the <code>flag</code> for the built-in properties allotted to the object. This is simply a representation of bits, and for example, the player flag is a singular bit (0x01). So the flag is actually an integer that, when in binary, represents all of the flags on the object.</p>
+<pre><code>Player:         0x01    set_player_flag()
+Programmer:     0x02    .programmer
+Wizard:         0x04    .wizard
+Obsolete_1:     0x08    *csssssh*
+Read:           0x10    .r
+Write:          0x20    .w
+Obsolete_2:     0x40    *csssssh*
+Fertile:        0x80    .f
+Anonymous:      0x100   .a
+Invalid:        0x200   &lt;destroy anonymous object&gt;
+Recycled:       0x400   &lt;destroy anonymous object and call recycle verb&gt;
+</code></pre>
+<h2 id="properties-on-objects"><a class="header" href="#properties-on-objects">Properties on Objects</a></h2>
+<p>A <em>property</em> is a named "slot" in an object that can hold an arbitrary MOO value. Every object has eleven built-in properties whose values are constrained to be of particular types. In addition, an object can have any number of other properties, none of which have type constraints. The built-in properties are as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th>Property</th><th>Description</th></tr></thead><tbody>
+<tr><td>name</td><td>a string, the usual name for this object</td></tr>
+<tr><td>owner</td><td>an object, the player who controls access to it</td></tr>
+<tr><td>location</td><td>an object, where the object is in virtual reality</td></tr>
+<tr><td>contents</td><td>a list of objects, the inverse of location</td></tr>
+<tr><td>last_move</td><td>a map of an object's last location and the time() it moved</td></tr>
+<tr><td>programmer</td><td>a bit, does the object have programmer rights?</td></tr>
+<tr><td>wizard</td><td>a bit, does the object have wizard rights?</td></tr>
+<tr><td>r</td><td>a bit, is the object publicly readable?</td></tr>
+<tr><td>w</td><td>a bit, is the object publicly writable?</td></tr>
+<tr><td>f</td><td>a bit, is the object fertile?</td></tr>
+<tr><td>a</td><td>a bit, can this be a parent of anonymous objects?</td></tr>
+</tbody></table>
+</div>
+<p>The <code>name</code> property is used to identify the object in various printed messages. It can only be set by a wizard or by the owner of the object. For player objects, the <code>name</code> property can only be set by a wizard; this allows the wizards, for example, to check that no two players have the same name.</p>
+<p>The <code>owner</code> identifies the object that has owner rights to this object, allowing them, for example, to change the <code>name</code> property. Only a wizard can change the value of this property.</p>
+<p>The <code>location</code> and <code>contents</code> properties describe a hierarchy of object containment in the virtual reality. Most objects are located "inside" some other object and that other object is the value of the <code>location</code> property.</p>
+<p>The <code>contents</code> property is a list of those objects for which this object is their location. In order to maintain the consistency of these properties, only the <code>move()</code> function is able to change them.</p>
+<p>The <code>last_move</code> property is a map in the form <code>["source" -&gt; OBJ, "time" -&gt; TIMESTAMP]</code>. This is set by the server each time an object is moved.</p>
+<p>The <code>wizard</code> and <code>programmer</code> bits are only applicable to characters, objects representing players. They control permission to use certain facilities in the server. They may only be set by a wizard.</p>
+<p>The <code>r</code> bit controls whether or not players other than the owner of this object can obtain a list of the properties or verbs in the object.</p>
+<p>Symmetrically, the <code>w</code> bit controls whether or not non-owners can add or delete properties and/or verbs on this object. The <code>r</code> and <code>w</code> bits can only be set by a wizard or by the owner of the object.</p>
+<p>The <code>f</code> bit specifies whether or not this object is <em>fertile</em>, whether or not players other than the owner of this object can create new objects with this one as the parent. It also controls whether or not non-owners can use the <code>chparent()</code> or <code>chparents()</code> built-in function to make this object the parent of an existing object. The <code>f</code> bit can only be set by a wizard or by the owner of the object.</p>
+<p>The <code>a</code> bit specifies whether or not this object can be used as a parent of an anonymous object created by a player other than the owner of this object. It works similarly to the <code>f</code> bit, but governs the creation of anonymous objects only.</p>
+<p>All of the built-in properties on any object can, by default, be read by any player. It is possible, however, to override this behavior from within the database, making any of these properties readable only by wizards. See the chapter on server assumptions about the database for details.</p>
+<p>As mentioned above, it is possible, and very useful, for objects to have other properties aside from the built-in ones. These can come from two sources.</p>
+<p>First, an object has a property corresponding to every property in its parent object. To use the jargon of object-oriented programming, this is a kind of <em>inheritance</em>. If some object has a property named <code>foo</code>, then so will all of its children and thus its children's children, and so on.</p>
+<p>Second, an object may have a new property defined only on itself and its descendants. For example, an object representing a rock might have properties indicating its weight, chemical composition, and/or pointiness, depending upon the uses to which the rock was to be put in the virtual reality.</p>
+<p>Every defined property (as opposed to those that are built-in) has an owner and a set of permissions for non-owners. The owner of the property can get and set the property's value and can change the non-owner permissions. Only a wizard can change the owner of a property.</p>
+<p>The initial owner of a property is the player who added it; this is usually, but not always, the player who owns the object to which the property was added. This is because properties can only be added by the object owner or a wizard, unless the object is publicly writable (i.e., its <code>w</code> property is 1), which is rare. Thus, the owner of an object may not necessarily be the owner of every (or even any) property on that object.</p>
+<p>The permissions on properties are drawn from this set:</p>
+<div class="table-wrapper"><table><thead><tr><th>Permission Bit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>r</code></td><td>Read permission lets non-owners get the value of the property</td></tr>
+<tr><td><code>w</code></td><td>Write permission lets non-owners set the property value</td></tr>
+<tr><td><code>c</code></td><td>Change ownership in descendants</td></tr>
+</tbody></table>
+</div>
+<p>The <code>c</code> bit is a bit more complicated. Recall that every object has all of the properties that its parent does and perhaps some more. Ordinarily, when a child object inherits a property from its parent, the owner of the child becomes the owner of that property. This is because the <code>c</code> permission bit is "on" by default. If the <code>c</code> bit is not on, then the inherited property has the same owner in the child as it does in the parent.</p>
+<p>As an example of where this can be useful, the ToastCore database ensures that every player has a <code>password</code> property containing the encrypted version of the player's connection password. For security reasons, we don't want other players to be able to see even the encrypted version of the password, so we turn off the <code>r</code> permission bit. To ensure that the password is only set in a consistent way (i.e., to the encrypted version of a player's password), we don't want to let anyone but a wizard change the property. Thus, in the parent object for all players, we made a wizard the owner of the password property and set the permissions to the empty string, <code>""</code>. That is, non-owners cannot read or write the property and, because the <code>c</code> bit is not set, the wizard who owns the property on the parent class also owns it on all of the descendants of that class.</p>
+<blockquote>
+<p>Warning: In classic LambdaMOO only the first 8 characters of a password were hashed. In practice this meant that the passwords <code>password</code> and <code>password12345</code> were exactly the same and either one can be used to login. This was fixed in ToastStunt. If you are upgrading from LambdaMOO, you will need to log in with only the first 8 characters of the password (and then reset your password to something more secure).</p>
+</blockquote>
+<p>Another, perhaps more down-to-earth example arose when a character named Ford started building objects he called "radios" and another character, yduJ, wanted to own one. Ford kindly made the generic radio object fertile, allowing yduJ to create a child object of it, her own radio. Radios had a property called <code>channel</code> that identified something corresponding to the frequency to which the radio was tuned. Ford had written nice programs on radios (verbs, discussed below) for turning the channel selector on the front of the radio, which would make a corresponding change in the value of the <code>channel</code> property. However, whenever anyone tried to turn the channel selector on yduJ's radio, they got a permissions error. The problem concerned the ownership of the <code>channel</code> property.</p>
+<p>As explained later, programs run with the permissions of their author. So, in this case, Ford's nice verb for setting the channel ran with his permissions. But, since the <code>channel</code> property in the generic radio had the <code>c</code> permission bit set, the <code>channel</code> property on yduJ's radio was owned by her. Ford didn't have permission to change it! The fix was simple. Ford changed the permissions on the <code>channel</code> property of the generic radio to be just <code>r</code>, without the <code>c</code> bit, and yduJ made a new radio. This time, when yduJ's radio inherited the <code>channel</code> property, yduJ did not inherit ownership of it; Ford remained the owner. Now the radio worked properly, because Ford's verb had permission to change the channel.</p>
+<h2 id="verbs-on-objects"><a class="header" href="#verbs-on-objects">Verbs on Objects</a></h2>
+<p>The final kind of piece making up an object is <em>verbs</em>. A verb is a named MOO program that is associated with a particular object. Most verbs implement commands that a player might type; for example, in the ToastCore database, there is a verb on all objects representing containers that implements commands of the form <code>put object in container</code>.</p>
+<p>It is also possible for MOO programs to invoke the verbs defined on objects. Some verbs, in fact, are designed to be used only from inside MOO code; they do not correspond to any particular player command at all. Thus, verbs in MOO are like the <em>procedures</em> or <em>methods</em> found in some other programming languages.</p>
+<blockquote>
+<p>Note: There are even more ways to refer to <em>verbs</em> and their counterparts in other programming language: <em>procedure</em>, <em>function</em>, <em>subroutine</em>, <em>subprogram</em>, and <em>method</em> are the primary ones. However, in <em>Object Oriented Programming</em> abbreviated <em>OOP</em> you may primarily know them as methods.</p>
+</blockquote>
+<p>As with properties, every verb has an owner and a set of permission bits. The owner of a verb can change its program, its permission bits, and its argument specifiers (discussed below). Only a wizard can change the owner of a verb.</p>
+<p>The owner of a verb also determines the permissions with which that verb runs; that is, the program in a verb can do whatever operations the owner of that verb is allowed to do and no others. Thus, for example, a verb owned by a wizard must be written very carefully, since wizards are allowed to do just about anything.</p>
+<blockquote>
+<p>Warning: This is serious business. The MOO has a variety of checks in place for permissions (at the object, verb and property levels) that are all but ignored when a verb is executing with a wizard's permissions. You may want to create a non-wizard character and give them the programmer bit, and write much of your code there, leaving the wizard bit for things that actually require access to everything, despite permissions.</p>
+</blockquote>
+<div class="table-wrapper"><table><thead><tr><th>Permission Bit</th><th>Description</th></tr></thead><tbody>
+<tr><td>r (read)</td><td>Let non-owners see the verb code</td></tr>
+<tr><td>w (write)</td><td>Let non-owners write the verb code</td></tr>
+<tr><td>x (execute)</td><td>Let verb be invoked from within another verb</td></tr>
+<tr><td>d (debug)</td><td>Let the verb raise errors to be caught</td></tr>
+</tbody></table>
+</div>
+<p>The permission bits on verbs are drawn from this set: <code>r</code> (read), <code>w</code> (write), <code>x</code> (execute), and <code>d</code> (debug). Read permission lets non-owners see the program for a verb and, symmetrically, write permission lets them change that program. The other two bits are not, properly speaking, permission bits at all; they have a universal effect, covering both the owner and non-owners.</p>
+<p>The execute bit determines whether or not the verb can be invoked from within a MOO program (as opposed to from the command line, like the <code>put</code> verb on containers). If the <code>x</code> bit is not set, the verb cannot be called from inside a program. This is most obviously useful for <code>this none this</code> verbs which are intended to be executed from within other verb programs, however, it may be useful to set the <code>x</code> bit on verbs that are intended to be executed from the command line, as then those can also
+be executed from within another verb.</p>
+<p>The setting of the debug bit determines what happens when the verb's program does something erroneous, like subtracting a number from a character string. If the <code>d</code> bit is set, then the server <em>raises</em> an error value; such raised errors can be <em>caught</em> by certain other pieces of MOO code. If the error is not caught, however, the server aborts execution of the command and, by default, prints an error message on the terminal of the player whose command is being executed. (See the chapter on server assumptions about the database for details on how uncaught errors are handled.) If the <code>d</code> bit is not set, then no error is raised, no message is printed, and the command is not aborted; instead the error value is returned as the result of the erroneous operation.</p>
+<blockquote>
+<p>Note: The <code>d</code> bit exists only for historical reasons; it used to be the only way for MOO code to catch and handle errors. With the introduction of the <code>try</code> -<code>except</code> statement and the error-catching expression, the <code>d</code> bit is no longer useful. All new verbs should have the <code>d</code> bit set, using the newer facilities for error handling if desired. Over time, old verbs written assuming the <code>d</code> bit would not be set should be changed to use the new facilities instead.</p>
+</blockquote>
+<p>In addition to an owner and some permission bits, every verb has three <em>argument specifiers</em>, one each for the <code>direct object</code>, the <code>preposition</code>, and the <code>indirect object</code>. The direct and indirect specifiers are each drawn from this set: <code>this</code>, <code>any</code>, or <code>none</code>. The preposition specifier is <code>none</code>, <code>any</code>, or one of the items in this list:</p>
+<div class="table-wrapper"><table><thead><tr><th>Preposition</th></tr></thead><tbody>
+<tr><td>with/using</td></tr>
+<tr><td>at/to</td></tr>
+<tr><td>in front of</td></tr>
+<tr><td>in/inside/into</td></tr>
+<tr><td>on top of/on/onto/upon</td></tr>
+<tr><td>out of/from inside/from</td></tr>
+<tr><td>over</td></tr>
+<tr><td>through</td></tr>
+<tr><td>under/underneath/beneath</td></tr>
+<tr><td>behind</td></tr>
+<tr><td>beside</td></tr>
+<tr><td>for/about</td></tr>
+<tr><td>is</td></tr>
+<tr><td>as</td></tr>
+<tr><td>off/off of</td></tr>
+</tbody></table>
+</div>
+<p>The argument specifiers are used in the process of parsing commands, described in the next chapter.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../the-toaststunt-database/moo-value-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../the-built-in-command-parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../the-toaststunt-database/moo-value-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../the-built-in-command-parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>

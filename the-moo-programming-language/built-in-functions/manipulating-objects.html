@@ -1,0 +1,529 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Manipulating Objects - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="manipulating-objects"><a class="header" href="#manipulating-objects">Manipulating Objects</a></h1>
+<p>Objects are, of course, the main focus of most MOO programming and, largely due to that, there are a lot of built-in functions for manipulating them.</p>
+<h2 id="fundamental-operations-on-objects"><a class="header" href="#fundamental-operations-on-objects">Fundamental Operations on Objects</a></h2>
+<h3 id="function-create"><a class="header" href="#function-create">Function: <code>create</code></a></h3>
+<pre><code>obj create(obj parent [, obj owner] [, int anon-flag] [, list init-args])
+obj create(list parents [, obj owner] [, int anon-flag] [, list init-args])
+</code></pre>
+<p>Creates and returns a new object whose parent (or parents) is parent (or parents) and whose owner is as described below.</p>
+<p>Creates and returns a new object whose parents are parents (or whose parent is parent) and whose owner is as described below. If any of the given parents are not valid, or if the given parent is neither valid nor #-1, then E_INVARG is raised. The given parents objects must be valid and must be usable as a parent (i.e., their <code>a</code> or <code>f</code> bits must be true) or else the programmer must own parents or be a wizard; otherwise E_PERM is raised. Furthermore, if anon-flag is true then <code>a</code> must be true; and, if anon-flag is false or not present, then <code>f</code> must be true. Otherwise, E_PERM is raised unless the programmer owns parents or is a wizard. E_PERM is also raised if owner is provided and not the same as the programmer, unless the programmer is a wizard.</p>
+<p>After the new object is created, its initialize verb, if any, is called. If init-args were given, they are passed as args to initialize. The new object is assigned the least non-negative object number that has not yet been used for a created object. Note that no object number is ever reused, even if the object with that number is recycled.</p>
+<blockquote>
+<p>Note: This is not strictly true, especially if you are using ToastCore and the <code>$recycler</code>, which is a great idea. If you don't, you end up with extremely high object numbers. However, if you plan on reusing object numbers you need to consider this carefully in your code. You do not want to include object numbers in your code if this is the case, as object numbers could change. Use corified references instead. For example, you can use <code>@corify #objnum as $my_object</code> and then be able to reference $my_object in your code. Alternatively you can do <code>@prop $sysobj.my_object #objnum</code>. If the object number ever changes, you can change the reference without updating all of your code.)</p>
+</blockquote>
+<blockquote>
+<p>Note: $sysobj is typically #0. Though it can technically be changed to something else, there is no reason that the author knows of to break from convention here.</p>
+</blockquote>
+<p>If anon-flag is false or not present, the new object is a permanent object and is assigned the least non-negative object number that has not yet been used for a created object. Note that no object number is ever reused, even if the object with that number is recycled.</p>
+<p>If anon-flag is true, the new object is an anonymous object and is not assigned an object number. Anonymous objects are automatically recycled when they are no longer used.</p>
+<p>The owner of the new object is either the programmer (if owner is not provided), the new object itself (if owner was given and is invalid, or owner (otherwise).</p>
+<p>The other built-in properties of the new object are initialized as follows:</p>
+<pre><code>name         ""
+location     #-1
+contents     {}
+programmer   0
+wizard       0
+r            0
+w            0
+f            0
+</code></pre>
+<p>The function <code>is_player()</code> returns false for newly created objects.</p>
+<p>In addition, the new object inherits all of the other properties on its parents. These properties have the same permission bits as on the parents. If the <code>c</code> permissions bit is set, then the owner of the property on the new object is the same as the owner of the new object itself; otherwise, the owner of the property on the new object is the same as that on the parent. The initial value of every inherited property is clear; see the description of the built-in function clear_property() for details.</p>
+<p>If the intended owner of the new object has a property named <code>ownership_quota</code> and the value of that property is an integer, then create() treats that value as a quota. If the quota is less than or equal to zero, then the quota is considered to be exhausted and create() raises E_QUOTA instead of creating an object. Otherwise, the quota is decremented and stored back into the <code>ownership_quota</code> property as a part of the creation of the new object.</p>
+<blockquote>
+<p>Note: In ToastStunt, this is disabled by default with the "OWNERSHIP_QUOTA" option in options.h</p>
+</blockquote>
+<h3 id="function-owned_objects"><a class="header" href="#function-owned_objects">Function: <code>owned_objects</code></a></h3>
+<pre><code>list owned_objects(OBJ owner)
+</code></pre>
+<p>Returns a list of all objects in the database owned by <code>owner</code>. Ownership is defined by the value of .owner on the object.</p>
+<h3 id="functions-chparent-chparents"><a class="header" href="#functions-chparent-chparents">Functions: <code>chparent</code>, <code>chparents</code></a></h3>
+<p>chparent -- Changes the parent of object to be new-parent.</p>
+<p>chparents -- Changes the parent of object to be new-parents.</p>
+<pre><code>none chparent(obj object, obj new-parent)
+none chparents(obj object, list new-parents)
+</code></pre>
+<p>If object is not valid, or if new-parent is neither valid nor equal to <code>#-1</code>, then <code>E_INVARG</code> is raised. If the programmer is neither a wizard or the owner of object, or if new-parent is not fertile (i.e., its <code>f</code> bit is not set) and the programmer is neither the owner of new-parent nor a wizard, then <code>E_PERM</code> is raised. If new-parent is equal to <code>object</code> or one of its current ancestors, <code>E_RECMOVE</code> is raised. If object or one of its descendants defines a property with the same name as one defined either on new-parent or on one of its ancestors, then <code>E_INVARG</code> is raised.</p>
+<p>Changing an object's parent can have the effect of removing some properties from and adding some other properties to that object and all of its descendants (i.e., its children and its children's children, etc.). Let common be the nearest ancestor that object and new-parent have in common before the parent of object is changed. Then all properties defined by ancestors of object under common (that is, those ancestors of object that are in turn descendants of common) are removed from object and all of its descendants. All properties defined by new-parent or its ancestors under common are added to object and all of its descendants. As with <code>create()</code>, the newly-added properties are given the same permission bits as they have on new-parent, the owner of each added property is either the owner of the object it's added to (if the <code>c</code> permissions bit is set) or the owner of that property on new-parent, and the value of each added property is <em>clear</em>; see the description of the built-in function <code>clear_property()</code> for details. All properties that are not removed or added in the reparenting process are completely unchanged.</p>
+<p>If new-parent is equal to <code>#-1</code>, then object is given no parent at all; it becomes a new root of the parent/child hierarchy. In this case, all formerly inherited properties on object are simply removed.</p>
+<p>If new-parents is equal to {}, then object is given no parent at all; it becomes a new root of the parent/child hierarchy. In this case, all formerly inherited properties on object are simply removed.</p>
+<blockquote>
+<p>Warning: On the subject of multiple inheritance, the author (Slither) thinks you should completely avoid it. Prefer <a href="https://en.wikipedia.org/wiki/Composition_over_inheritance">composition over inheritance</a>.</p>
+</blockquote>
+<h3 id="function-valid"><a class="header" href="#function-valid">Function: <code>valid</code></a></h3>
+<pre><code>int valid(obj object)
+</code></pre>
+<p>Return a non-zero integer if object is valid and not yet recycled.</p>
+<p>Returns a non-zero integer (i.e., a true value) if object is a valid object (one that has been created and not yet recycled) and zero (i.e., a false value) otherwise.</p>
+<pre><code>valid(#0)    =&gt;   1
+valid(#-1)   =&gt;   0
+</code></pre>
+<h3 id="functions-parent-parents"><a class="header" href="#functions-parent-parents">Functions: <code>parent</code>, <code>parents</code></a></h3>
+<p>parent -- return the parent of object</p>
+<p>parents -- return the parents of object</p>
+<pre><code>obj parent(obj object)
+list parents(obj object)
+</code></pre>
+<h3 id="function-children"><a class="header" href="#function-children">Function: <code>children</code></a></h3>
+<pre><code>list children(obj object)
+</code></pre>
+<p>return a list of the children of object.</p>
+<h3 id="function-isa"><a class="header" href="#function-isa">Function: <code>isa</code></a></h3>
+<pre><code>int isa(OBJ object, OBJ parent)
+obj isa(OBJ object, LIST parent list [, INT return_parent])
+</code></pre>
+<p>Returns true if object is a descendant of parent, otherwise false.</p>
+<p>If a third argument is present and true, the return value will be the first parent that object1 descends from in the <code>parent list</code>.</p>
+<pre><code>isa(#2, $wiz)                           =&gt; 1
+isa(#2, {$thing, $wiz, $container})     =&gt; 1
+isa(#2, {$thing, $wiz, $container}, 1)  =&gt; #57 (generic wizard)
+isa(#2, {$thing, $room, $container}, 1) =&gt; #-1
+</code></pre>
+<h3 id="function-locate_by_name"><a class="header" href="#function-locate_by_name">Function: <code>locate_by_name</code></a></h3>
+<pre><code>list locate_by_name(STR object name)
+</code></pre>
+<p>This function searches every object in the database for those containing <code>object name</code> in their .name property.</p>
+<blockquote>
+<p>Warning: Take care when using this when thread mode is active, as this is a threaded function and that means it implicitly suspends. <code>set_thread_mode(0)</code> if you want to use this without suspending.</p>
+</blockquote>
+<h3 id="function-locations"><a class="header" href="#function-locations">Function: <code>locations</code></a></h3>
+<pre><code>list locations(OBJ object [, OBJ stop [, INT is-parent]])
+</code></pre>
+<p>Recursively build a list of an object's location, its location's location, and so forth until finally hitting $nothing.</p>
+<p>Example:</p>
+<pre><code>locations(me) =&gt; {#20381, #443, #104735}
+
+$string_utils:title_list(locations(me)) =&gt; "\"Butterknife Ballet\" Control Room FelElk, the one-person celestial birther \"Butterknife Ballet\", and Uncharted Space: Empty Space"
+</code></pre>
+<p>If <code>stop</code> is in the locations found, it will stop before there and return the list (exclusive of the stop object).</p>
+<p>If the third argument is true, <code>stop</code> is assumed to be a PARENT. And if any of your locations are children of that parent, it stops there.</p>
+<h3 id="function-occupants"><a class="header" href="#function-occupants">Function: <code>occupants</code></a></h3>
+<pre><code>list occupants(LIST objects [, OBJ | LIST parent, INT player flag set?])
+</code></pre>
+<p>Iterates through the list of objects and returns those matching a specific set of criteria:</p>
+<ol>
+<li>
+<p>If only objects is specified, the occupants function will return a list of objects with the player flag set.</p>
+</li>
+<li>
+<p>If the parent argument is specified, a list of objects descending from parent&gt; will be returned. If parent is a list, object must descend from at least one object in the list.</p>
+</li>
+<li>
+<p>If both parent and player flag set are specified, occupants will check both that an object is descended from parent and also has the player flag set.</p>
+</li>
+</ol>
+<h3 id="function-recycle"><a class="header" href="#function-recycle">Function: <code>recycle</code></a></h3>
+<pre><code>none recycle(obj object)
+</code></pre>
+<p>destroy object irrevocably.</p>
+<p>The given object is destroyed, irrevocably. The programmer must either own object or be a wizard; otherwise, <code>E_PERM</code> is raised. If object is not valid, then <code>E_INVARG</code> is raised. The children of object are reparented to the parent of object. Before object is recycled, each object in its contents is moved to <code>#-1</code> (implying a call to object's <code>exitfunc</code> verb, if any) and then object's <code>recycle</code> verb, if any, is called with no arguments.</p>
+<p>After object is recycled, if the owner of the former object has a property named <code>ownership_quota</code> and the value of that property is a integer, then <code>recycle()</code> treats that value as a <em>quota</em> and increments it by one, storing the result back into the <code>ownership_quota</code> property.</p>
+<h3 id="function-recreate"><a class="header" href="#function-recreate">Function: <code>recreate</code></a></h3>
+<pre><code>obj recreate(OBJ old, OBJ parent [, OBJ owner])
+</code></pre>
+<p>Recreate invalid object old (one that has previously been recycle()ed) as parent, optionally owned by owner.</p>
+<p>This has the effect of filling in holes created by recycle() that would normally require renumbering and resetting the maximum object.</p>
+<p>The normal rules apply to parent and owner. You either have to own parent, parent must be fertile, or you have to be a wizard. Similarly, to change owner, you should be a wizard. Otherwise it's superfluous.</p>
+<h3 id="function-next_recycled_object"><a class="header" href="#function-next_recycled_object">Function: <code>next_recycled_object</code></a></h3>
+<pre><code>obj | int next_recycled_object(OBJ start)
+</code></pre>
+<p>Return the lowest invalid object. If start is specified, no object lower than start will be considered. If there are no invalid objects, this function will return 0.</p>
+<h3 id="function-recycled_objects"><a class="header" href="#function-recycled_objects">Function: <code>recycled_objects</code></a></h3>
+<pre><code>list recycled_objects)
+</code></pre>
+<p>Return a list of all invalid objects in the database. An invalid object is one that has been destroyed with the recycle() function.</p>
+<h3 id="function-ancestors"><a class="header" href="#function-ancestors">Function: <code>ancestors</code></a></h3>
+<pre><code>list ancestorsOBJ object [, INT full])
+</code></pre>
+<p>Return a list of all ancestors of <code>object</code> in order ascending up the inheritance hiearchy. If <code>full</code> is true, <code>object</code> will be included in the list.</p>
+<h3 id="function-clear_ancestor_cache"><a class="header" href="#function-clear_ancestor_cache">Function: <code>clear_ancestor_cache</code></a></h3>
+<pre><code>void clear_ancestor_cache()
+</code></pre>
+<p>The ancestor cache contains a quick lookup of all of an object's ancestors which aids in expediant property lookups. This is an experimental feature and, as such, you may find that something has gone wrong. If that's that case, this function will completely clear the cache and it will be rebuilt as-needed.</p>
+<h3 id="function-descendants"><a class="header" href="#function-descendants">Function: <code>descendants</code></a></h3>
+<pre><code>list descendants(OBJ object [, INT full])
+</code></pre>
+<p>Return a list of all nested children of object. If full is true, object will be included in the list.</p>
+<h3 id="function-object_bytes"><a class="header" href="#function-object_bytes">Function: <code>object_bytes</code></a></h3>
+<pre><code>int object_bytes(obj object)
+</code></pre>
+<p>Returns the number of bytes of the server's memory required to store the given object.</p>
+<p>The space calculation includes the space used by the values of all of the objects non-clear properties and by the verbs and properties defined directly on the object.</p>
+<p>Raises <code>E_INVARG</code> if object is not a valid object and <code>E_PERM</code> if the programmer is not a wizard.</p>
+<h3 id="function-respond_to"><a class="header" href="#function-respond_to">Function: <code>respond_to</code></a></h3>
+<pre><code>int | list respond_to(OBJ object, STR verb)
+</code></pre>
+<p>Returns true if verb is callable on object, taking into account inheritance, wildcards (star verbs), etc. Otherwise, returns false. If the caller is permitted to read the object (because the object's <code>r' flag is true, or the caller is the owner or a wizard) the true value is a list containing the object number of the object that defines the verb and the full verb name(s).  Otherwise, the numeric value</code>1' is returned.</p>
+<h3 id="function-max_object"><a class="header" href="#function-max_object">Function: <code>max_object</code></a></h3>
+<pre><code>obj max_object()
+</code></pre>
+<p>Returns the largest object number ever assigned to a created object.</p>
+<p>//TODO update for how Toast handles recycled objects if it is different
+Note that the object with this number may no longer exist; it may have been recycled. The next object created will be assigned the object number one larger than the value of <code>max_object()</code>. The next object getting the number one larger than <code>max_object()</code> only applies if you are using built-in functions for creating objects and does not apply if you are using the <code>$recycler</code> to create objects.</p>
+<h2 id="object-movement"><a class="header" href="#object-movement">Object Movement</a></h2>
+<h3 id="function-move"><a class="header" href="#function-move">Function: <code>move</code></a></h3>
+<pre><code>none move(obj what, obj where [, INT position])
+</code></pre>
+<p>Changes what's location to be where.</p>
+<p>This is a complex process because a number of permissions checks and notifications must be performed. The actual movement takes place as described in the following paragraphs.</p>
+<p>what should be a valid object and where should be either a valid object or <code>#-1</code> (denoting a location of 'nowhere'); otherwise <code>E_INVARG</code> is raised. The programmer must be either the owner of what or a wizard; otherwise, <code>E_PERM</code> is raised.</p>
+<p>If where is a valid object, then the verb-call</p>
+<pre><code>where:accept(what)
+</code></pre>
+<p>is performed before any movement takes place. If the verb returns a false value and the programmer is not a wizard, then where is considered to have refused entrance to what; <code>move()</code> raises <code>E_NACC</code>. If where does not define an <code>accept</code> verb, then it is treated as if it defined one that always returned false.</p>
+<p>If moving what into where would create a loop in the containment hierarchy (i.e., what would contain itself, even indirectly), then <code>E_RECMOVE</code> is raised instead.</p>
+<p>The <code>location</code> property of what is changed to be where, and the <code>contents</code> properties of the old and new locations are modified appropriately. Let old-where be the location of what before it was moved. If old-where is a valid object, then the verb-call</p>
+<pre><code>old-where:exitfunc(what)
+</code></pre>
+<p>is performed and its result is ignored; it is not an error if old-where does not define a verb named <code>exitfunc</code>. Finally, if where and what are still valid objects, and where is still the location of what, then the verb-call</p>
+<pre><code>where:enterfunc(what)
+</code></pre>
+<p>is performed and its result is ignored; again, it is not an error if where does not define a verb named <code>enterfunc</code>.</p>
+<p>Passing <code>position</code> into move will effectively listinsert() the object into that position in the .contents list.</p>
+<h2 id="operations-on-properties"><a class="header" href="#operations-on-properties">Operations on Properties</a></h2>
+<h3 id="function-properties"><a class="header" href="#function-properties">Function: <code>properties</code></a></h3>
+<pre><code>list properties(obj object)
+</code></pre>
+<p>Returns a list of the names of the properties defined directly on the given object, not inherited from its parent.</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If the programmer does not have read permission on object, then <code>E_PERM</code> is raised.</p>
+<h3 id="function-property_info"><a class="header" href="#function-property_info">Function: <code>property_info</code></a></h3>
+<pre><code>list property_info(obj object, str prop-name)
+</code></pre>
+<p>Get the owner and permission bits for the property named prop-name on the given object</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object has no non-built-in property named prop-name, then <code>E_PROPNF</code> is raised. If the programmer does not have read (write) permission on the property in question, then <code>property_info()</code> raises <code>E_PERM</code>.</p>
+<h3 id="function-set_property_info"><a class="header" href="#function-set_property_info">Function: <code>set_property_info</code></a></h3>
+<pre><code>none set_property_info(obj object, str prop-name, list info)
+</code></pre>
+<p>Set the owner and permission bits for the property named prop-name on the given object</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object has no non-built-in property named prop-name, then <code>E_PROPNF</code> is raised. If the programmer does not have read (write) permission on the property in question, then <code>set_property_info()</code> raises <code>E_PERM</code>. Property info has the following form:</p>
+<pre><code>{owner, perms [, new-name]}
+</code></pre>
+<p>where owner is an object, perms is a string containing only characters from the set <code>r</code>, <code>w</code>, and <code>c</code>, and new-name is a string; new-name is never part of the value returned by <code>property_info()</code>, but it may optionally be given as part of the value provided to <code>set_property_info()</code>. This list is the kind of value returned by property_info() and expected as the third argument to <code>set_property_info()</code>; the latter function raises <code>E_INVARG</code> if owner is not valid, if perms contains any illegal characters, or, when new-name is given, if prop-name is not defined directly on object or new-name names an existing property defined on object or any of its ancestors or descendants.</p>
+<h3 id="function-add_property"><a class="header" href="#function-add_property">Function: <code>add_property</code></a></h3>
+<pre><code>none add_property(obj object, str prop-name, value, list info)
+</code></pre>
+<p>Defines a new property on the given object</p>
+<p>The property is inherited by all of its descendants; the property is named prop-name, its initial value is value, and its owner and initial permission bits are given by info in the same format as is returned by <code>property_info()</code>, described above.</p>
+<p>If object is not valid or info does not specify a valid owner and well-formed permission bits or object or its ancestors or descendants already defines a property named prop-name, then <code>E_INVARG</code> is raised. If the programmer does not have write permission on object or if the owner specified by info is not the programmer and the programmer is not a wizard, then <code>E_PERM</code> is raised.</p>
+<h3 id="function-delete_property"><a class="header" href="#function-delete_property">Function: <code>delete_property</code></a></h3>
+<pre><code>none delete_property(obj object, str prop-name)
+</code></pre>
+<p>Removes the property named prop-name from the given object and all of its descendants.</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If the programmer does not have write permission on object, then <code>E_PERM</code> is raised. If object does not directly define a property named prop-name (as opposed to inheriting one from its parent), then <code>E_PROPNF</code> is raised.</p>
+<h3 id="function-is_clear_property"><a class="header" href="#function-is_clear_property">Function: <code>is_clear_property</code></a></h3>
+<pre><code>int is_clear_property(obj object, str prop-name) ##### Function: `clear_property`
+</code></pre>
+<p>Test the specified property for clear</p>
+<p>clear_property -- Set the specified property to clear</p>
+<p>none <code>clear_property</code> (obj object, str prop-name)</p>
+<p>These two functions test for clear and set to clear, respectively, the property named prop-name on the given object. If object is not valid, then <code>E_INVARG</code> is raised. If object has no non-built-in property named prop-name, then <code>E_PROPNF</code> is raised. If the programmer does not have read (write) permission on the property in question, then <code>is_clear_property()</code> (<code>clear_property()</code>) raises <code>E_PERM</code>.</p>
+<p>If a property is clear, then when the value of that property is queried the value of the parent's property of the same name is returned. If the parent's property is clear, then the parent's parent's value is examined, and so on. If object is the definer of the property prop-name, as opposed to an inheritor of the property, then <code>clear_property()</code> raises <code>E_INVARG</code>.</p>
+<h2 id="operations-on-verbs"><a class="header" href="#operations-on-verbs">Operations on Verbs</a></h2>
+<h3 id="function-verbs"><a class="header" href="#function-verbs">Function: <code>verbs</code></a></h3>
+<pre><code>list verbs(obj object)
+</code></pre>
+<p>Returns a list of the names of the verbs defined directly on the given object, not inherited from its parent</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If the programmer does not have read permission on object, then <code>E_PERM</code> is raised.</p>
+<p>Most of the remaining operations on verbs accept a string containing the verb's name to identify the verb in question. Because verbs can have multiple names and because an object can have multiple verbs with the same name, this practice can lead to difficulties. To most unambiguously refer to a particular verb, one can instead use a positive integer, the index of the verb in the list returned by <code>verbs()</code>, described above.</p>
+<p>For example, suppose that <code>verbs(#34)</code> returns this list:</p>
+<pre><code>{"foo", "bar", "baz", "foo"}
+</code></pre>
+<p>Object <code>#34</code> has two verbs named <code>foo</code> defined on it (this may not be an error, if the two verbs have different command syntaxes). To refer unambiguously to the first one in the list, one uses the integer 1; to refer to the other one, one uses 4.</p>
+<p>In the function descriptions below, an argument named verb-desc is either a string containing the name of a verb or else a positive integer giving the index of that verb in its defining object's <code>verbs()</code> list.
+For historical reasons, there is also a second, inferior mechanism for referring to verbs with numbers, but its use is strongly discouraged. If the property <code>$server_options.support_numeric_verbname_strings</code> exists with a true value, then functions on verbs will also accept a numeric string (e.g., <code>"4"</code>) as a verb descriptor. The decimal integer in the string works more-or-less like the positive integers described above, but with two significant differences:</p>
+<p>The numeric string is a <em>zero-based</em> index into <code>verbs()</code>; that is, in the string case, you would use the number one less than what you would use in the positive integer case.</p>
+<p>When there exists a verb whose actual name looks like a decimal integer, this numeric-string notation is ambiguous; the server will in all cases assume that the reference is to the first verb in the list for which the given string could be a name, either in the normal sense or as a numeric index.</p>
+<p>Clearly, this older mechanism is more difficult and risky to use; new code should only be written to use the current mechanism, and old code using numeric strings should be modified not to do so.</p>
+<h3 id="function-verb_info"><a class="header" href="#function-verb_info">Function: <code>verb_info</code></a></h3>
+<pre><code>list verb_info(obj object, str|int verb-desc)
+</code></pre>
+<p>Get the owner, permission bits, and name(s) for the verb as specified by verb-desc on the given object</p>
+<h3 id="function-set_verb_info"><a class="header" href="#function-set_verb_info">Function: <code>set_verb_info</code></a></h3>
+<p>set_verb_info -- Set the owner, permissions bits, and names(s) for the verb as verb-desc on the given object</p>
+<p>none <code>set_verb_info</code> (obj object, str|int verb-desc, list info)</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object does not define a verb as specified by verb-desc, then <code>E_VERBNF</code> is raised. If the programmer does not have read (write) permission on the verb in question, then <code>verb_info()</code> (<code>set_verb_info()</code>) raises <code>E_PERM</code>.</p>
+<p>Verb info has the following form:</p>
+<pre><code>{owner, perms, names}
+</code></pre>
+<p>where owner is an object, perms is a string containing only characters from the set <code>r</code>, <code>w</code>, <code>x</code>, and <code>d</code>, and names is a string. This is the kind of value returned by <code>verb_info()</code> and expected as the third argument to <code>set_verb_info()</code>. <code>set_verb_info()</code> raises <code>E_INVARG</code> if owner is not valid, if perms contains any illegal characters, or if names is the empty string or consists entirely of spaces; it raises <code>E_PERM</code> if owner is not the programmer and the programmer is not a wizard.</p>
+<h3 id="function-verb_args"><a class="header" href="#function-verb_args">Function: <code>verb_args</code></a></h3>
+<pre><code>list verb_args(obj object, str|int verb-desc)
+</code></pre>
+<p>Get the direct-object, preposition, and indirect-object specifications for the verb as specified by verb-desc on the given object.</p>
+<h3 id="function-set_verb_args"><a class="header" href="#function-set_verb_args">Function: <code>set_verb_args</code></a></h3>
+<p>verb_args -- set the direct-object, preposition, and indirect-object specifications for the verb as specified by verb-desc on the given object.</p>
+<p>none <code>set_verb_args</code> (obj object, str|int verb-desc, list args)</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object does not define a verb as specified by verb-desc, then <code>E_VERBNF</code> is raised. If the programmer does not have read (write) permission on the verb in question, then the function raises <code>E_PERM</code>.</p>
+<p>Verb args specifications have the following form:</p>
+<pre><code>{dobj, prep, iobj}
+</code></pre>
+<p>where dobj and iobj are strings drawn from the set <code>"this"</code>, <code>"none"</code>, and <code>"any"</code>, and prep is a string that is either <code>"none"</code>, <code>"any"</code>, or one of the prepositional phrases listed much earlier in the description of verbs in the first chapter. This is the kind of value returned by <code>verb_args()</code> and expected as the third argument to <code>set_verb_args()</code>. Note that for <code>set_verb_args()</code>, prep must be only one of the prepositional phrases, not (as is shown in that table) a set of such phrases separated by <code>/</code> characters. <code>set_verb_args</code> raises <code>E_INVARG</code> if any of the dobj, prep, or iobj strings is illegal.</p>
+<pre><code>verb_args($container, "take")
+                    =&gt;   {"any", "out of/from inside/from", "this"}
+set_verb_args($container, "take", {"any", "from", "this"})
+</code></pre>
+<h3 id="function-add_verb"><a class="header" href="#function-add_verb">Function: <code>add_verb</code></a></h3>
+<pre><code>none add_verb(obj object, list info, list args)
+</code></pre>
+<p>Defines a new verb on the given object</p>
+<p>The new verb's owner, permission bits and name(s) are given by info in the same format as is returned by <code>verb_info()</code>, described above. The new verb's direct-object, preposition, and indirect-object specifications are given by args in the same format as is returned by <code>verb_args</code>, described above. The new verb initially has the empty program associated with it; this program does nothing but return an unspecified value.</p>
+<p>If object is not valid, or info does not specify a valid owner and well-formed permission bits and verb names, or args is not a legitimate syntax specification, then <code>E_INVARG</code> is raised. If the programmer does not have write permission on object or if the owner specified by info is not the programmer and the programmer is not a wizard, then <code>E_PERM</code> is raised.</p>
+<h3 id="function-delete_verb"><a class="header" href="#function-delete_verb">Function: <code>delete_verb</code></a></h3>
+<pre><code>none delete_verb(obj object, str|int verb-desc)
+</code></pre>
+<p>Removes the verb as specified by verb-desc from the given object</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If the programmer does not have write permission on object, then <code>E_PERM</code> is raised. If object does not define a verb as specified by verb-desc, then <code>E_VERBNF</code> is raised.</p>
+<h3 id="function-verb_code"><a class="header" href="#function-verb_code">Function: <code>verb_code</code></a></h3>
+<pre><code>list verb_code(obj object, str|int verb-desc [, fully-paren [, indent]])
+</code></pre>
+<p>Get the MOO-code program associated with the verb as specified by verb-desc on object</p>
+<h3 id="function-set_verb_code"><a class="header" href="#function-set_verb_code">Function: <code>set_verb_code</code></a></h3>
+<pre><code>list set_verb_code(obj object, str|int verb-desc, list code)
+</code></pre>
+<p>Set the MOO-code program associated with the verb as specified by verb-desc on object</p>
+<p>The program is represented as a list of strings, one for each line of the program; this is the kind of value returned by <code>verb_code()</code> and expected as the third argument to <code>set_verb_code()</code>. For <code>verb_code()</code>, the expressions in the returned code are usually written with the minimum-necessary parenthesization; if full-paren is true, then all expressions are fully parenthesized.</p>
+<p>Also for <code>verb_code()</code>, the lines in the returned code are usually not indented at all; if indent is true, each line is indented to better show the nesting of statements.</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object does not define a verb as specified by verb-desc, then <code>E_VERBNF</code> is raised. If the programmer does not have read (write) permission on the verb in question, then <code>verb_code()</code> (<code>set_verb_code()</code>) raises <code>E_PERM</code>. If the programmer is not, in fact. a programmer, then <code>E_PERM</code> is raised.</p>
+<p>For <code>set_verb_code()</code>, the result is a list of strings, the error messages generated by the MOO-code compiler during processing of code. If the list is non-empty, then <code>set_verb_code()</code> did not install code; the program associated with the verb in question is unchanged.</p>
+<h3 id="function-disassemble"><a class="header" href="#function-disassemble">Function: <code>disassemble</code></a></h3>
+<pre><code>list disassemble(obj object, str|int verb-desc)
+</code></pre>
+<p>Returns a (longish) list of strings giving a listing of the server's internal "compiled" form of the verb as specified by verb-desc on object</p>
+<p>This format is not documented and may indeed change from release to release, but some programmers may nonetheless find the output of <code>disassemble()</code> interesting to peruse as a way to gain a deeper appreciation of how the server works.</p>
+<p>If object is not valid, then <code>E_INVARG</code> is raised. If object does not define a verb as specified by verb-desc, then <code>E_VERBNF</code> is raised. If the programmer does not have read permission on the verb in question, then <code>disassemble()</code> raises <code>E_PERM</code>.</p>
+<h2 id="operations-on-waifs"><a class="header" href="#operations-on-waifs">Operations on WAIFs</a></h2>
+<h3 id="function-new_waif"><a class="header" href="#function-new_waif">Function: <code>new_waif</code></a></h3>
+<pre><code>waif new_waif)
+</code></pre>
+<p>The <code>new_waif()</code> builtin creates a new WAIF whose class is the calling object and whose owner is the perms of the calling verb.</p>
+<p>This wizardly version causes it to be owned by the caller of the verb.</p>
+<h3 id="function-waif_stats"><a class="header" href="#function-waif_stats">Function: <code>waif_stats</code></a></h3>
+<pre><code>map waif_stats()
+</code></pre>
+<p>Returns a MAP of statistics about instantiated waifs.</p>
+<p>Each waif class will be a key in the MAP and its value will be the number of waifs of that class currently instantiated. Additionally, there is a <code>total' key that will return the total number of instantiated waifs, and a</code>pending_recycle' key that will return the number of waifs that have been destroyed and are awaiting the call of their :recycle verb.</p>
+<h2 id="operations-on-player-objects"><a class="header" href="#operations-on-player-objects">Operations on Player Objects</a></h2>
+<h3 id="function-players"><a class="header" href="#function-players">Function: <code>players</code></a></h3>
+<pre><code>list players()
+</code></pre>
+<p>Returns a list of the object numbers of all player objects in the database</p>
+<h3 id="function-is_player"><a class="header" href="#function-is_player">Function: <code>is_player</code></a></h3>
+<pre><code>int is_player(obj object)
+</code></pre>
+<p>Returns a true value if the given object is a player object and a false value otherwise.</p>
+<p>If object is not valid, <code>E_INVARG</code> is raised.</p>
+<h3 id="function-set_player_flag"><a class="header" href="#function-set_player_flag">Function: <code>set_player_flag</code></a></h3>
+<pre><code>none set_player_flag(obj object, value)
+</code></pre>
+<p>Confers or removes the "player object" status of the given object, depending upon the truth value of value</p>
+<p>If object is not valid, <code>E_INVARG</code> is raised. If the programmer is not a wizard, then <code>E_PERM</code> is raised.</p>
+<p>If value is true, then object gains (or keeps) "player object" status: it will be an element of the list returned by <code>players()</code>, the expression <code>is_player(object)</code> will return true, and the server will treat a call to <code>$do_login_command()</code> that returns object as logging in the current connection.</p>
+<p>If value is false, the object loses (or continues to lack) "player object" status: it will not be an element of the list returned by <code>players()</code>, the expression <code>is_player(object)</code> will return false, and users cannot connect to object by name when they log into the server. In addition, if a user is connected to object at the time that it loses "player object" status, then that connection is immediately broken, just as if <code>boot_player(object)</code> had been called (see the description of <code>boot_player()</code> below).</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../the-moo-programming-language/built-in-functions/manipulating-moo-values.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../the-moo-programming-language/server-commands-and-database-assumptions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../the-moo-programming-language/built-in-functions/manipulating-moo-values.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../the-moo-programming-language/server-commands-and-database-assumptions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>

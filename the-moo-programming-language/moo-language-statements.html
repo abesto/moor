@@ -1,0 +1,552 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>MOO Language Statements - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="moo-language-statements"><a class="header" href="#moo-language-statements">MOO Language Statements</a></h1>
+<p>Statements are MOO constructs that, in contrast to expressions, perform some useful, non-value-producing operation. For example, there are several kinds of statements, called <em>looping constructs</em>, that repeatedly perform some set of operations. Fortunately, there are many fewer kinds of statements in MOO than there are kinds of expressions.</p>
+<h2 id="errors-while-executing-statements"><a class="header" href="#errors-while-executing-statements">Errors While Executing Statements</a></h2>
+<p>Statements do not return values, but some kinds of statements can, under certain circumstances described below, generate errors. If such an error is generated in a verb whose <code>d</code> (debug) bit is not set, then the error is ignored and the statement that generated it is simply skipped; execution proceeds with the next statement.</p>
+<blockquote>
+<p>Note: This error-ignoring behavior is very error prone, since it affects <em>all</em> errors, including ones the programmer may not have anticipated. The <code>d</code> bit exists only for historical reasons; it was once the only way for MOO programmers to catch and handle errors. The error-catching expression and the <code>try</code> -<code>except</code> statement are far better ways of accomplishing the same thing.</p>
+</blockquote>
+<p>If the <code>d</code> bit is set, as it usually is, then the error is <em>raised</em> and can be caught and handled either by code surrounding the expression in question or by verbs higher up on the chain of calls leading to the current verb. If the error is not caught, then the server aborts the entire task and, by default, prints a message to the current player. See the descriptions of the error-catching expression and the <code>try</code>-<code>except</code> statement for the details of how errors can be caught, and the chapter on server assumptions about the database for details on the handling of uncaught errors.</p>
+<h2 id="simple-statements"><a class="header" href="#simple-statements">Simple Statements</a></h2>
+<p>The simplest kind of statement is the <em>null</em> statement, consisting of just a semicolon:</p>
+<pre><code>;
+</code></pre>
+<p>It doesn't do anything at all, but it does it very quickly.</p>
+<p>The next simplest statement is also one of the most common, the expression statement, consisting of any expression followed by a semicolon:</p>
+<pre><code>expression;
+</code></pre>
+<p>The given expression is evaluated and the resulting value is ignored. Commonly-used kinds of expressions for such statements include assignments and verb calls. Of course, there's no use for such a statement unless the evaluation of expression has some side-effect, such as changing the value of some variable or property, printing some text on someone's screen, etc.</p>
+<pre><code>#42.weight = 40;
+#42.weight;
+2 + 5;
+obj:verbname();
+1 &gt; 2;
+2 &lt; 1;
+</code></pre>
+<h2 id="statements-for-testing-conditions"><a class="header" href="#statements-for-testing-conditions">Statements for Testing Conditions</a></h2>
+<p>The <code>if</code> statement allows you to decide whether or not to perform some statements based on the value of an arbitrary expression:</p>
+<pre><code>if (expression)
+  statements
+endif
+</code></pre>
+<p>Expression is evaluated and, if it returns a true value, the statements are executed in order; otherwise, nothing more is done.</p>
+<p>One frequently wants to perform one set of statements if some condition is true and some other set of statements otherwise. The optional <code>else</code> phrase in an <code>if</code> statement allows you to do this:</p>
+<pre><code>if (expression)
+  statements-1
+else
+  statements-2
+endif
+</code></pre>
+<p>This statement is executed just like the previous one, except that statements-1 are executed if expression returns a true value and statements-2 are executed otherwise.</p>
+<p>Sometimes, one needs to test several conditions in a kind of nested fashion:</p>
+<pre><code>if (expression-1)
+  statements-1
+else
+  if (expression-2)
+    statements-2
+  else
+    if (expression-3)
+      statements-3
+    else
+      statements-4
+    endif
+  endif
+endif
+</code></pre>
+<p>Such code can easily become tedious to write and difficult to read. MOO provides a somewhat simpler notation for such cases:</p>
+<pre><code>if (expression-1)
+  statements-1
+elseif (expression-2)
+  statements-2
+elseif (expression-3)
+  statements-3
+else
+  statements-4
+endif
+</code></pre>
+<p>Note that <code>elseif</code> is written as a single word, without any spaces. This simpler version has the very same meaning as the original: evaluate expression-i for i equal to 1, 2, and 3, in turn, until one of them returns a true value; then execute the statements-i associated with that expression. If none of the expression-i return a true value, then execute statements-4.</p>
+<p>Any number of <code>elseif</code> phrases can appear, each having this form:</p>
+<pre><code>elseif (expression)
+    statements
+</code></pre>
+<p>The complete syntax of the <code>if</code> statement, therefore, is as follows:</p>
+<pre><code>if (expression)
+  statements
+zero-or-more-elseif-phrases
+an-optional-else-phrase
+endif
+</code></pre>
+<h2 id="statements-for-looping"><a class="header" href="#statements-for-looping">Statements for Looping</a></h2>
+<p>MOO provides three different kinds of looping statements, allowing you to have a set of statements executed (1) once for each element of a given sequence (list, map or string); (2) once for each integer or object number in a given range; and (3) over and over until a given condition stops being true.</p>
+<p>To perform some statements once for each element of a given sequence, use this syntax:</p>
+<pre><code>for value, key-or-index in (expression)
+  statements
+endfor
+</code></pre>
+<p>The expression is evaluated and should return a list, map or string; if it does not, E_TYPE is raised. The statements are then executed once for each element of that sequence in turn; each time, the given value is assigned the value of the element in question, and key-or-index is assigned the index of value in the list or string, or its key if the sequence is a map. key-or-index is optional. For example, consider the following statements:</p>
+<pre><code>odds = {1, 3, 5, 7, 9};
+evens = {};
+for n in (odds)
+  evens = {@evens, n + 1};
+endfor
+</code></pre>
+<p>The value of the variable <code>evens</code> after executing these statements is the list</p>
+<p><code>{2, 4, 6, 8, 10}</code></p>
+<p>If the example were modified:</p>
+<pre><code>odds = {1, 3, 5, 7, 9};
+pairs = [];
+for n, i in (odds)
+  pairs[i] = n + 1;
+endfor
+</code></pre>
+<p>The value of the variable <code>pairs</code> after executing these statements is the map</p>
+<p><code>[1 -&gt; 2, 2 -&gt; 4, 3 -&gt; 6, 4 -&gt; 8, 5 -&gt; 10]</code></p>
+<p>To perform a set of statements once for each integer or object number in a given range, use this syntax:</p>
+<pre><code>for variable in [expression-1..expression-2]
+  statements
+endfor
+</code></pre>
+<p>The two expressions are evaluated in turn and should either both return integers or both return object numbers; E_TYPE is raised otherwise. The statements are then executed once for each integer (or object number, as appropriate) greater than or equal to the value of expression-1 and less than or equal to the result of expression-2, in increasing order. Each time, the given variable is assigned the integer or object number in question. For example, consider the following statements:</p>
+<pre><code>evens = {};
+for n in [1..5]
+  evens = {@evens, 2 * n};
+endfor
+</code></pre>
+<p>The value of the variable <code>evens</code> after executing these statements is just as in the previous example: the list</p>
+<p><code>{2, 4, 6, 8, 10}</code></p>
+<p>The following loop over object numbers prints out the number and name of every valid object in the database:</p>
+<pre><code>for o in [#0..max_object()]
+  if (valid(o))
+    notify(player, tostr(o, ": ", o.name));
+  endif
+endfor
+</code></pre>
+<p>The final kind of loop in MOO executes a set of statements repeatedly as long as a given condition remains true:</p>
+<pre><code>while (expression)
+  statements
+endwhile
+</code></pre>
+<p>The expression is evaluated and, if it returns a true value, the statements are executed; then, execution of the <code>while</code> statement begins all over again with the evaluation of the expression. That is, execution alternates between evaluating the expression and executing the statements until the expression returns a false value. The following example code has precisely the same effect as the loop just shown above:</p>
+<pre><code>evens = {};
+n = 1;
+while (n &lt;= 5)
+  evens = {@evens, 2 * n};
+  n = n + 1;
+endwhile
+</code></pre>
+<p>Fine point: It is also possible to give a <em>name</em> to a <code>while</code> loop.</p>
+<pre><code>while name (expression)
+  statements
+endwhile
+</code></pre>
+<p>which has precisely the same effect as</p>
+<pre><code>while (name = expression)
+  statements
+endwhile
+</code></pre>
+<p>This naming facility is only really useful in conjunction with the <code>break</code> and <code>continue</code> statements, described in the next section.</p>
+<p>With each kind of loop, it is possible that the statements in the body of the loop will never be executed at all. For iteration over lists, this happens when the list returned by the expression is empty. For iteration on integers, it happens when expression-1 returns a larger integer than expression-2. Finally, for the <code>while</code> loop, it happens if the expression returns a false value the very first time it is evaluated.</p>
+<blockquote>
+<p>Warning: With <code>while</code> loops it is especially important to make sure you do not create an infinite loop. That is, a loop that will never terminate because it's expression will never become false. Be especially careful if you suspend(), yin(), or $command_utils:suspend_if_needed() within a loop, as the task may never run out of ticks.</p>
+</blockquote>
+<h2 id="terminating-one-or-all-iterations-of-a-loop"><a class="header" href="#terminating-one-or-all-iterations-of-a-loop">Terminating One or All Iterations of a Loop</a></h2>
+<p>Sometimes, it is useful to exit a loop before it finishes all of its iterations. For example, if the loop is used to search for a particular kind of element of a list, then it might make sense to stop looping as soon as the right kind of element is found, even if there are more elements yet to see. The <code>break</code> statement is used for this purpose; it has the form</p>
+<pre><code>break;
+</code></pre>
+<p>or</p>
+<pre><code>break name;
+</code></pre>
+<p>Each <code>break</code> statement indicates a specific surrounding loop; if name is not given, the statement refers to the innermost one. If it is given, name must be the name appearing right after the <code>for</code> or <code>while</code> keyword of the desired enclosing loop. When the <code>break</code> statement is executed, the indicated loop is immediately terminated and executing continues just as if the loop had completed its iterations normally.</p>
+<p>MOO also allows you to terminate just the current iteration of a loop, making it immediately go on to the next one, if any. The <code>continue</code> statement does this; it has precisely the same forms as the <code>break</code> statement:</p>
+<pre><code>continue;
+</code></pre>
+<p>or</p>
+<pre><code>continue name;
+</code></pre>
+<p>An example that sums up a list of integers, excluding any integer equal to four:</p>
+<pre><code>my_list = {1, 2, 3, 4, 5, 6, 7};
+sum = 0;
+for element in (my_list)
+    if (element == 4)
+        continue;
+    endif
+    sum = sum + element;
+endfor
+</code></pre>
+<p>An example that breaks out of hte loop when a specific object in a list is found</p>
+<pre><code>my_list = {#13633, #98, #15840, #18657, #22664};
+i = 0;
+found = 0;
+for obj in (my_list)
+    i = i + 1;
+    if (obj == #18657)
+        found = 1;
+        break;
+    endif
+endfor
+if (found)
+    notify(player, tostr("found #18657 at ", i, " index"));
+else
+    notify(player, "couldn't find #18657 in the list!");
+endif
+</code></pre>
+<h2 id="returning-a-value-from-a-verb"><a class="header" href="#returning-a-value-from-a-verb">Returning a Value from a Verb</a></h2>
+<p>The MOO program in a verb is just a sequence of statements. Normally, when the verb is called, those statements are simply executed in order and then the integer 0 is returned as the value of the verb-call expression. Using the <code>return</code> statement, one can change this behavior. The <code>return</code> statement has one of the following two forms:</p>
+<pre><code>return;
+</code></pre>
+<p>or</p>
+<pre><code>return expression;
+</code></pre>
+<p>When it is executed, execution of the current verb is terminated immediately after evaluating the given expression, if any. The verb-call expression that started the execution of this verb then returns either the value of expression or the integer 0, if no expression was provided.</p>
+<p>We could modify the example given above. Imagine a verb called has_object which takes an object (that we want to find) as it's first argument and a list of objects (to search) as it's second argument:</p>
+<pre><code>{seek_obj, list_of_objects} = args;
+for obj in (list_of_objects)
+    if (obj == seek_obj)
+        return 1;
+    endif
+endfor
+</code></pre>
+<p>The verb above could be called with <code>obj_with_verb:has_object(#18657, {#1, #3, #4, #3000})</code> and it would return <code>false</code> (0) if the object was not found in the list. It would return <code>true</code> (1) if the object was found in the list.</p>
+<p>Of course we could write this much more simply (and get the index of the object in the list at the same time):</p>
+<pre><code>{seek_obj, list_of_objects} = args;
+return seek_obj in list_of_objects;
+</code></pre>
+<h2 id="handling-errors-in-statements"><a class="header" href="#handling-errors-in-statements">Handling Errors in Statements</a></h2>
+<p>A traceback is raised when there is an error in the execution of code (this differs from a compilation error you might see when programming a verb).</p>
+<p>Examples to cause tracebacks:</p>
+<pre><code>;notify(5)
+
+#-1:Input to EVAL (this == #-1), line 3:  Incorrect number of arguments (expected 2-4; got 1)
+... called from built-in function eval()
+... called from #58:eval_cmd_string, line 19
+... called from #58:eval*-d, line 13
+(End of traceback)
+</code></pre>
+<p>And another example:</p>
+<pre><code>;notify(me, 5)
+
+#-1:Input to EVAL (this == #-1), line 3:  Type mismatch (args[1] of notify() expected object; got integer)
+... called from built-in function eval()
+... called from #58:eval_cmd_string, line 19
+... called from #58:eval*-d, line 13
+(End of traceback)
+</code></pre>
+<p>As you can see in the above examples, ToastStunt will tell you the line number of the error, as well as some additional information about the error, including the expected number of arguments and the type. This will also work when you are catching errors in a try/except statement (detailed below).</p>
+<p>Additional, you will also be shown {object, verb / property name} when you try to access a verb or property that was not found.</p>
+<p>Normally, whenever a piece of MOO code raises an error, the entire task is aborted and a message printed to the user. Often, such errors can be anticipated in advance by the programmer and code written to deal with them in a more graceful manner. The <code>try</code>-<code>except</code> statement allows you to do this; the syntax is as follows:</p>
+<pre><code>try
+  statements-0
+except variable-1 (codes-1)
+  statements-1
+except variable-2 (codes-2)
+  statements-2
+...
+endtry
+</code></pre>
+<p>where the variables may be omitted and each codes part is either the keyword <code>ANY</code> or else a comma-separated list of expressions, just like an argument list. As in an argument list, the splicing operator (<code>@</code>) can be used here. There can be anywhere from 1 to 255 <code>except</code> clauses.</p>
+<p>First, each codes part is evaluated, yielding a list of error codes that should be caught if they're raised; if a codes is <code>ANY</code>, then it is equivalent to the list of all possible MOO values.</p>
+<p>Next, statements-0 is executed; if it doesn't raise an error, then that's all that happens for the entire <code>try</code>-<code>except</code> statement. Otherwise, let E be the error it raises. From top to bottom, E is searched for in the lists resulting from the various codes parts; if it isn't found in any of them, then it continues to be raised, possibly to be caught by some piece of code either surrounding this <code>try</code>-<code>except</code> statement or higher up on the verb-call stack.</p>
+<p>If E is found first in codes-i, then variable-i (if provided) is assigned a value containing information about the error being raised and statements-i is executed. The value assigned to variable-i is a list of four elements:</p>
+<pre><code>{code, message, value, traceback}
+</code></pre>
+<p>where code is E, the error being raised, message and value are as provided by the code that raised the error, and traceback is a list like that returned by the <code>callers()</code> function, including line numbers. The traceback list contains entries for every verb from the one that raised the error through the one containing this <code>try</code>-<code>except</code> statement.</p>
+<p>Unless otherwise mentioned, all of the built-in errors raised by expressions, statements, and functions provide <code>tostr(code)</code> as message and zero as value.</p>
+<p>Here's an example of the use of this kind of statement:</p>
+<pre><code>try
+  result = object:(command)(@arguments);
+  player:tell("=&gt; ", toliteral(result));
+except v (ANY)
+  tb = v[4];
+  if (length(tb) == 1)
+    player:tell("** Illegal command: ", v[2]);
+  else
+    top = tb[1];
+    tb[1..1] = {};
+    player:tell(top[1], ":", top[2], ", line ", top[6], ":", v[2]);
+    for fr in (tb)
+      player:tell("... called from ", fr[1], ":", fr[2], ", line ", fr[6]);
+    endfor
+    player:tell("(End of traceback)");
+  endif
+endtry
+</code></pre>
+<h2 id="cleaning-up-after-errors"><a class="header" href="#cleaning-up-after-errors">Cleaning Up After Errors</a></h2>
+<p>Whenever an error is raised, it is usually the case that at least some MOO code gets skipped over and never executed. Sometimes, it's important that a piece of code <em>always</em> be executed, whether or not an error is raised. Use the <code>try</code>-<code>finally</code> statement for these cases; it has the following syntax:</p>
+<pre><code>try
+  statements-1
+finally
+  statements-2
+endtry
+</code></pre>
+<p>First, statements-1 is executed; if it completes without raising an error, returning from this verb, or terminating the current iteration of a surrounding loop (we call these possibilities <em>transferring control</em>), then statements-2 is executed and that's all that happens for the entire <code>try</code>-<code>finally</code> statement.</p>
+<p>Otherwise, the process of transferring control is interrupted and statements-2 is executed. If statements-2 itself completes without transferring control, then the interrupted control transfer is resumed just where it left off. If statements-2 does transfer control, then the interrupted transfer is simply forgotten in favor of the new one.</p>
+<p>In short, this statement ensures that statements-2 is executed after control leaves statements-1 for whatever reason; it can thus be used to make sure that some piece of cleanup code is run even if statements-1 doesn't simply run normally to completion.</p>
+<p>Here's an example:</p>
+<pre><code>try
+  start = time();
+  object:(command)(@arguments);
+finally
+  end = time();
+  this:charge_user_for_seconds(player, end - start);
+endtry
+</code></pre>
+<blockquote>
+<p>Warning: If a task runs out of ticks, it's possible for your finally code to not run.</p>
+</blockquote>
+<h2 id="executing-statements-at-a-later-time"><a class="header" href="#executing-statements-at-a-later-time">Executing Statements at a Later Time</a></h2>
+<p>It is sometimes useful to have some sequence of statements execute at a later time, without human intervention. For example, one might implement an object that, when thrown into the air, eventually falls back to the ground; the <code>throw</code> verb on that object should arrange to print a message about the object landing on the ground, but the message shouldn't be printed until some number of seconds have passed.</p>
+<p>The <code>fork</code> statement is intended for just such situations and has the following syntax:</p>
+<pre><code>fork (expression)
+  statements
+endfork
+</code></pre>
+<p>The <code>fork</code> statement first executes the expression, which must return an integer or float; call that value n. It then creates a new MOO <em>task</em> that will, after at least n seconds (or sub seconds in the case of a float like 0.1), execute the statements. When the new task begins, all variables will have the values they had at the time the <code>fork</code> statement was executed. The task executing the <code>fork</code> statement immediately continues execution. The concept of tasks is discussed in detail in the next section.</p>
+<p>By default, there is no limit to the number of tasks any player may fork, but such a limit can be imposed from within the database. See the chapter on server assumptions about the database for details.</p>
+<p>Occasionally, one would like to be able to kill a forked task before it even starts; for example, some player might have caught the object that was thrown into the air, so no message should be printed about it hitting the ground. If a variable name is given after the <code>fork</code> keyword, like this:</p>
+<pre><code>fork name (expression)
+  statements
+endfork
+</code></pre>
+<p>then that variable is assigned the <em>task ID</em> of the newly-created task. The value of this variable is visible both to the task executing the fork statement and to the statements in the newly-created task. This ID can be passed to the <code>kill_task()</code> function to keep the task from running and will be the value of <code>task_id()</code> once the task begins execution.</p>
+<blockquote>
+<p>Note: This feature has other uses as well. The MOO is single threaded (though ToastStunt supports some built-ins executing on other threads), which means that complex logic (verbs that call verbs that call verbs ...) can cause the MOO to <em>lag</em>. For instance, let's say when your user tosses their ball up, you want to calculate a complex trajectory involve the ball and other objects in the room. These calculations are costly and done in another verb, they take time to be performed. However, you want some actions to happen both before the calculations (everyone in the room seeing the ball is thrown into the air) and after the ball has left the players hands (the player reaches into their pocket and pulls out a new ball). If there is no <code>fork()</code> then the calculations need to complete before the verb can continue execution, which means the player won't pull out a fresh ball until after the calculations are complete. A <code>fork()</code> allows the player to throw the ball, the MOO to <code>fork()</code> the task, which allows execution of the verb to continue right away and the user to pull out a new ball, without experiencing the delay that the calculations being returned (without a <code>fork()</code>) would have incurred.</p>
+</blockquote>
+<p>An example of this:</p>
+<pre><code>{ball} = args;
+player:tell("You throw the ball!");
+ball:calculate_trajectory();
+player:tell("You get out another ball!");
+</code></pre>
+<p>In the above example, <code>player:tell("You get out another ball!");</code> will not be executed until after <code>ball:calculate_trajectory();</code> is completed.</p>
+<pre><code>{ball} = args;
+player:tell("You throw the ball!");
+fork (1)
+    ball:calculate_trajectory();
+endfor
+player:tell("You get out another ball!");
+</code></pre>
+<p>In this forked example, the ball will be thrown, the task forked for 1 second later and the the final line telling the player they got out another ball will be followed up right after, without having to wait for the trajectory verb to finish running.</p>
+<p>This type of fork cannot be used if the trajectory is required by the code that runs after it. For instance:</p>
+<pre><code>{ball} = args;
+player:tell("You throw the ball!");
+direction = ball:calculate_trajectory();
+player:tell("You get out another ball!");
+player:tell("Your ball arcs to the " + direction);
+</code></pre>
+<p>If the above task was forked as it is below:</p>
+<pre><code>{ball} = args;
+player:tell("You throw the ball!");
+fork (1)
+    direction = ball:calculate_trajectory();
+endfork
+player:tell("You get out another ball!");
+player:tell("Your ball arcs to the " + direction);
+</code></pre>
+<p>The verb would raise <code>E_VARNF</code> due to direction not being defined.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../the-moo-programming-language/moo-language-expressions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../the-moo-programming-language/moo-tasks.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../the-moo-programming-language/moo-language-expressions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../the-moo-programming-language/moo-tasks.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>

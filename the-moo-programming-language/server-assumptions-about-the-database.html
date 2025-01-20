@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Server Assumptions About the Database - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="server-assumptions-about-the-database"><a class="header" href="#server-assumptions-about-the-database">Server Assumptions About the Database</a></h1>
+<p>There are a small number of circumstances under which the server directly and specifically accesses a particular verb or property in the database. This section gives a complete list of such circumstances.</p>
+<h2 id="server-options-set-in-the-database"><a class="header" href="#server-options-set-in-the-database">Server Options Set in the Database</a></h2>
+<p>Many optional behaviors of the server can be controlled from within the database by creating the property <code>#0.server_options</code> (also known as <code>$server_options</code>), assigning as its value a valid object number, and then defining various properties on that object. At a number of times, the server checks for whether the property <code>$server_options</code> exists and has an object number as its value. If so, then the server looks for a variety of other properties on that <code>$server_options</code> object and, if they exist, uses their values to control how the server operates.</p>
+<p>The specific properties searched for are each described in the appropriate section below, but here is a brief list of all of the relevant properties for ease of reference:</p>
+<div class="table-wrapper"><table><thead><tr><th>Property</th><th>Description</th></tr></thead><tbody>
+<tr><td>bg_seconds</td><td>The number of seconds allotted to background tasks.</td></tr>
+<tr><td>bg_ticks</td><td>The number of ticks allotted to background tasks.</td></tr>
+<tr><td>connect_timeout</td><td>The maximum number of seconds to allow an un-logged-in in-bound connection to remain open.</td></tr>
+<tr><td>default_flush_command</td><td>The initial setting of each new connection's flush command.</td></tr>
+<tr><td>fg_seconds</td><td>The number of seconds allotted to foreground tasks.</td></tr>
+<tr><td>fg_ticks</td><td>The number of ticks allotted to foreground tasks.</td></tr>
+<tr><td>max_stack_depth</td><td>The maximum number of levels of nested verb calls. Only used if it is higher than default</td></tr>
+<tr><td>name_lookup_timeout</td><td>The maximum number of seconds to wait for a network hostname/address lookup.</td></tr>
+<tr><td>outbound_connect_timeout</td><td>The maximum number of seconds to wait for an outbound network connection to successfully open.</td></tr>
+<tr><td>protect_<code>property</code></td><td>Restrict reading/writing of built-in <code>property</code> to wizards.</td></tr>
+<tr><td>protect_<code>function</code></td><td>Restrict use of built-in <code>function</code> to wizards.</td></tr>
+<tr><td>queued_task_limit</td><td>The maximum number of forked or suspended tasks any player can have queued at a given time.</td></tr>
+<tr><td>support_numeric_verbname_strings</td><td>Enables use of an obsolete verb-naming mechanism.</td></tr>
+<tr><td>max_queued_output</td><td>The maximum number of output characters the server is willing to buffer for any given network connection before discarding old output to make way for new.</td></tr>
+<tr><td>dump_interval</td><td>an int in seconds for how often to checkpoint the database.</td></tr>
+<tr><td>proxy_rewrite</td><td>control whether IPs from proxies get rewritten.</td></tr>
+<tr><td>file_io_max_files</td><td>allow DB-changeable limits on how many files can be opened at once.</td></tr>
+<tr><td>sqlite_max_handles</td><td>allow DB-changeable limits on how many SQLite connections can be opened at once.</td></tr>
+<tr><td>task_lag_threshold</td><td>override default task_lag_threshold for handling lagging tasks</td></tr>
+<tr><td>finished_tasks_limit</td><td>override default finished_tasks_limit (enables the finished_tasks function and define how many tasks get saved by default)</td></tr>
+<tr><td>no_name_lookup</td><td>override default no_name_lookup (disables automatic DNS name resolution on new connections)</td></tr>
+<tr><td>max_list_concat</td><td>limit the size of user-constructed lists</td></tr>
+<tr><td>max_string_concat</td><td>limit the size of user-constructed strings</td></tr>
+<tr><td>max_concat_catchable</td><td>govern whether violating concat size limits causes out-of-seconds or E_QUOTA error</td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>Note: If you override a default value that was defined in options.h (such as no_name_lookup or finished_tasks_limit, or many others) you will need to call <code>load_server_options()</code> for your changes to take affect.</p>
+</blockquote>
+<blockquote>
+<p>Note: Verbs defined on #0 are not longer subject to the wiz-only permissions check on built-in functions generated by defining $server_options.protect_FOO with a true value. Thus, you can now write a `wrapper' for a built-in function without having to re-implement all of the server's built-in permissions checks for that function.</p>
+</blockquote>
+<blockquote>
+<p>Note: If a built-in function FOO has been made wiz-only (by defining $server_options.protect_FOO with a true value) and a call is made to that function from a non-wiz verb not defined on #0 (that is, if the server is about to raise E_PERM), the server first checks to see if the verb #0:bf_FOO exists. If so, it calls it instead of raising E_PERM and returns or raises whatever it returns or raises.</p>
+</blockquote>
+<blockquote>
+<p>Note: options.h #defines IGNORE_PROP_PROTECTED by default. If it is defined, the server ignores all attempts to protect built-in properties (such as $server_options.protect_location). Protecting properties is a significant performance hit, and most MOOs do not use this functionality.</p>
+</blockquote>
+<h2 id="server-messages-set-in-the-database"><a class="header" href="#server-messages-set-in-the-database">Server Messages Set in the Database</a></h2>
+<p>There are a number of circumstances under which the server itself generates messages on network connections. Most of these can be customized or even eliminated from within the database. In each such case, a property on <code>$server_options</code> is checked at the time the message would be printed. If the property does not exist, a default message is printed. If the property exists and its value is not a string or a list containing strings, then no message is printed at all. Otherwise, the string(s) are printed in place of the default message, one string per line. None of these messages are ever printed on an outbound network connection created by the function <code>open_network_connection()</code>.</p>
+<p>The following list covers all of the customizable messages, showing for each the name of the relevant property on <code>$server_options</code>, the default message, and the circumstances under which the message is printed:</p>
+<div class="table-wrapper"><table><thead><tr><th>Default Message</th><th>Description</th></tr></thead><tbody>
+<tr><td>boot_msg = "*** Disconnected ***"</td><td>The function boot_player() was called on this connection.</td></tr>
+<tr><td>connect_msg = "*** Connected ***"</td><td>The user object that just logged in on this connection existed before $do_login_command() was called.</td></tr>
+<tr><td>create_msg = "*** Created ***"</td><td>The user object that just logged in on this connection did not exist before $do_login_command() was called.</td></tr>
+<tr><td>recycle_msg = "*** Recycled ***"</td><td>The logged-in user of this connection has been recycled or renumbered (via the renumber() function).</td></tr>
+<tr><td>redirect_from_msg = "*** Redirecting connection to new port ***"</td><td>The logged-in user of this connection has just logged in on some other connection.</td></tr>
+<tr><td>redirect_to_msg = "*** Redirecting old connection to this port ***"</td><td>The user who just logged in on this connection was already logged in on some other connection.</td></tr>
+<tr><td>server_full_msg Default: *** Sorry, but the server cannot accept any more connections right now.<br> *** Please try again later.</td><td>This connection arrived when the server really couldn't accept any more connections, due to running out of a critical operating system resource.</td></tr>
+<tr><td>timeout_msg = "*** Timed-out waiting for login. ***"</td><td>This in-bound network connection was idle and un-logged-in for at least CONNECT_TIMEOUT seconds (as defined in the file options.h when the server was compiled).</td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>Fine point: If the network connection in question was received at a listening point (established by the <code>listen()</code> function) handled by an object obj other than <code>#0</code>, then system messages for that connection are looked for on <code>obj.server_options</code>; if that property does not exist, then <code>$server_options</code> is used instead.</p>
+</blockquote>
+<h2 id="checkpointing-the-database"><a class="header" href="#checkpointing-the-database">Checkpointing the Database</a></h2>
+<p>The server maintains the entire MOO database in main memory, not on disk. It is therefore necessary for it to dump the database to disk if it is to persist beyond the lifetime of any particular server execution. The server is careful to dump the database just before shutting down, of course, but it is also prudent for it to do so at regular intervals, just in case something untoward happens.</p>
+<p>//TODO: is the date here still true in 64bit time?</p>
+<p>To determine how often to make these <em>checkpoints</em> of the database, the server consults the value of <code>$server_options.dump_interval</code>. If it exists and its value is an integer greater than or equal to 60, then it is taken as the number of seconds to wait between checkpoints; otherwise, the server makes a new checkpoint every 3600 seconds (one hour). If the value of <code>$server_options.dump_interval</code> implies that the next checkpoint should be scheduled at a time after 3:14:07 a.m. on Tuesday, January 19, 2038, then the server instead uses the default value of 3600 seconds in the future.</p>
+<p>The decision about how long to wait between checkpoints is made again immediately after each one begins. Thus, changes to <code>$server_options.dump_interval</code> will take effect after the next checkpoint happens.</p>
+<p>Whenever the server begins to make a checkpoint, it makes the following verb call:</p>
+<pre><code>$checkpoint_started()
+</code></pre>
+<p>When the checkpointing process is complete, the server makes the following verb call:</p>
+<pre><code>$checkpoint_finished(success)
+</code></pre>
+<p>where success is true if and only if the checkpoint was successfully written on the disk. Checkpointing can fail for a number of reasons, usually due to exhaustion of various operating system resources such as virtual memory or disk space. It is not an error if either of these verbs does not exist; the corresponding call is simply skipped.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../the-moo-programming-language/server-commands-and-database-assumptions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../the-moo-programming-language/networking.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../the-moo-programming-language/server-commands-and-database-assumptions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../the-moo-programming-language/networking.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>

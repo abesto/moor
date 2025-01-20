@@ -1,0 +1,277 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Networking - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="networking"><a class="header" href="#networking">Networking</a></h1>
+<h2 id="accepting-and-initiating-network-connections"><a class="header" href="#accepting-and-initiating-network-connections">Accepting and Initiating Network Connections</a></h2>
+<p>When the server first accepts a new, incoming network connection, it is given the low-level network address of computer on the other end. It immediately attempts to convert this address into the human-readable host name that will be entered in the server log and returned by the <code>connection_name()</code> function. This conversion can, for the TCP/IP networking configurations, involve a certain amount of communication with remote name servers, which can take quite a long time and/or fail entirely. While the server is doing this conversion, it is not doing anything else at all; in particular, it it not responding to user commands or executing MOO tasks.</p>
+<p>By default, the server will wait no more than 5 seconds for such a name lookup to succeed; after that, it behaves as if the conversion had failed, using instead a printable representation of the low-level address. If the property <code>name_lookup_timeout</code> exists on <code>$server_options</code> and has an integer as its value, that integer is used instead as the timeout interval.</p>
+<p>When the <code>open_network_connection()</code> function is used, the server must again do a conversion, this time from the host name given as an argument into the low-level address necessary for actually opening the connection. This conversion is subject to the same timeout as in the in-bound case; if the conversion does not succeed before the timeout expires, the connection attempt is aborted and <code>open_network_connection()</code> raises <code>E_QUOTA</code>.</p>
+<p>After a successful conversion, though, the server must still wait for the actual connection to be accepted by the remote computer. As before, this can take a long time during which the server is again doing nothing else. Also as before, the server will by default wait no more than 5 seconds for the connection attempt to succeed; if the timeout expires, <code>open_network_connection()</code> again raises <code>E_QUOTA</code>. This default timeout interval can also be overridden from within the database, by defining the property <code>outbound_connect_timeout</code> on <code>$server_options</code> with an integer as its value.</p>
+<h2 id="associating-network-connections-with-players"><a class="header" href="#associating-network-connections-with-players">Associating Network Connections with Players</a></h2>
+<p>When a network connection is first made to the MOO, it is identified by a unique, negative object number. Such a connection is said to be <em>un-logged-in</em> and is not yet associated with any MOO player object.</p>
+<p>Each line of input on an un-logged-in connection is first parsed into words in the usual way (see the chapter on command parsing for details) and then these words are passed as the arguments in a call to the verb <code>$do_login_command()</code>. For example, the input line</p>
+<pre><code>connect Munchkin frebblebit
+</code></pre>
+<p>would result in the following call being made:</p>
+<pre><code>$do_login_command("connect", "Munchkin", "frebblebit")
+</code></pre>
+<p>In that call, the variable <code>player</code> will have as its value the negative object number associated with the appropriate network connection. The functions <code>notify()</code> and <code>boot_player()</code> can be used with such object numbers to send output to and disconnect un-logged-in connections. Also, the variable <code>argstr</code> will have as its value the unparsed command line as received on the network connection.</p>
+<p>If <code>$do_login_command()</code> returns a valid player object and the connection is still open, then the connection is considered to have <em>logged into</em> that player. The server then makes one of the following verbs calls, depending on the player object that was returned:</p>
+<pre><code>$user_created(player)
+$user_connected(player)
+$user_reconnected(player)
+</code></pre>
+<p>The first of these is used if the returned object number is greater than the value returned by the <code>max_object()</code> function before <code>$do_login_command()</code> was invoked, that is, it is called if the returned object appears to have been freshly created. If this is not the case, then one of the other two verb calls is used. The <code>$user_connected()</code> call is used if there was no existing active connection for the returned player object. Otherwise, the <code>$user_reconnected()</code> call is used instead.</p>
+<blockquote>
+<p>Fine point: If a user reconnects and the user's old and new connections are on two different listening points being handled by different objects (see the description of the <code>listen()</code> function for more details), then <code>user_client_disconnected</code> is called for the old connection and <code>user_connected</code> for the new one.</p>
+</blockquote>
+<blockquote>
+<p>Note: If any code suspends in do_login_command() or a verb called by do_login_command() (read(), suspend(), or any threaded function), you can no longer connect an object by returning it. This is a weird ancient MOO holdover. The best way to log a player in after suspending is to use the <code>switch_player()</code> function to switch their unlogged in negative object to their player object.</p>
+</blockquote>
+<p>If an in-bound network connection does not successfully log in within a certain period of time, the server will automatically shut down the connection, thereby freeing up the resources associated with maintaining it. Let L be the object handling the listening point on which the connection was received (or <code>#0</code> if the connection came in on the initial listening point). To discover the timeout period, the server checks on <code>L.server_options</code> or, if it doesn't exist, on <code>$server_options</code> for a <code>connect_timeout</code> property. If one is found and its value is a positive integer, then that's the number of seconds the server will use for the timeout period. If the <code>connect_timeout</code> property exists but its value isn't a positive integer, then there is no timeout at all. If the property doesn't exist, then the default timeout is 300 seconds.</p>
+<p>When any network connection (even an un-logged-in or outbound one) is terminated, by either the server or the client, then one of the following two verb calls is made:</p>
+<pre><code>$user_disconnected(player)
+$user_client_disconnected(player)
+</code></pre>
+<p>The first is used if the disconnection is due to actions taken by the server (e.g., a use of the <code>boot_player()</code> function or the un-logged-in timeout described above) and the second if the disconnection was initiated by the client side.</p>
+<p>It is not an error if any of these five verbs do not exist; the corresponding call is simply skipped.</p>
+<blockquote>
+<p>Note: Only one network connection can be controlling a given player object at a given time; should a second connection attempt to log in as that player, the first connection is unceremoniously closed (and <code>$user_reconnected()</code> called, as described above). This makes it easy to recover from various kinds of network problems that leave connections open but inaccessible.</p>
+</blockquote>
+<p>When the network connection is first established, the null command is automatically entered by the server, resulting in an initial call to <code>$do_login_command()</code> with no arguments. This signal can be used by the verb to print out a welcome message, for example.</p>
+<blockquote>
+<p>Warning: If there is no <code>$do_login_command()</code> verb defined, then lines of input from un-logged-in connections are simply discarded. Thus, it is <em>necessary</em> for any database to include a suitable definition for this verb.</p>
+</blockquote>
+<blockquote>
+<p>Note that a database with a missing or broken $do_login_command may still be accessed (and perhaps repaired) by running the server with the -e command line option. See section Emergency Wizard Mode.</p>
+</blockquote>
+<p>It is possible to compile the server with an option defining an <code>out-of-band prefix</code> for commands. This is a string that the server will check for at the beginning of every line of input from players, regardless of whether or not those players are logged in and regardless of whether or not reading tasks are waiting for input from those players. If a given line of input begins with the defined out-of-band prefix (leading spaces, if any, are <em>not</em> stripped before testing), then it is not treated as a normal command or as input to any reading task. Instead, the line is parsed into a list of words in the usual way and those words are given as the arguments in a call to <code>$do_out_of_band_command()</code>. For example, if the out-of-band prefix were defined to be <code>#$#</code>, then the line of input</p>
+<pre><code>#$# client-type fancy
+</code></pre>
+<p>would result in the following call being made in a new server task:</p>
+<pre><code>$do_out_of_band_command("#$#", "client-type", "fancy")
+</code></pre>
+<p>During the call to <code>$do_out_of_band_command()</code>, the variable <code>player</code> is set to the object number representing the player associated with the connection from which the input line came. Of course, if that connection has not yet logged in, the object number will be negative. Also, the variable <code>argstr</code> will have as its value the unparsed input line as received on the network connection.</p>
+<p>Out-of-band commands are intended for use by fancy client programs that may generate asynchronous <em>events</em> of which the server must be notified. Since the client cannot, in general, know the state of the player's connection (logged-in or not, reading task or not), out-of-band commands provide the only reliable client-to-server communications channel.</p>
+<h2 id="player-input-handlers"><a class="header" href="#player-input-handlers">Player Input Handlers</a></h2>
+<p><strong>$do_out_of_band_command</strong></p>
+<p>On any connection for which the connection-option disable-oob has not been set, any unflushed incoming lines that begin with the out-of-band prefix will be treated as out-of-band commands, meaning that if the verb $do_out_of_band_command() exists and is executable, it will be called for each such line. For more on this, see Out-of-band Processing.</p>
+<p><strong>$do_command</strong></p>
+<p>As we previously described in The Built-in Command Parser, on any logged-in connection that</p>
+<ul>
+<li>is not the subject of a read() call,</li>
+<li>does not have a .program command in progress, and</li>
+<li>has not had its connection option hold-input set,</li>
+</ul>
+<p>any incoming line that</p>
+<ul>
+<li>has not been flushed</li>
+<li>is in-band (i.e., has not been consumed by out-of-band processing) and</li>
+<li>is not itself .program or one of the other four intrinsic commands</li>
+</ul>
+<p>will result in a call to $do_command() provided that verb exists and is executable. If this verb suspends or returns a true value, then processing of that line ends at this point, otherwise, whether the verb returned false or did not exist in the first place, the remainder of the builtin parsing process is invoked.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../the-moo-programming-language/server-assumptions-about-the-database.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../the-moo-programming-language/the-first-tasks-run-by-the-server.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../the-moo-programming-language/server-assumptions-about-the-database.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../the-moo-programming-language/the-first-tasks-run-by-the-server.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>

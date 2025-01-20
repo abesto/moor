@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Server Configuration - The moor Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/style.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The moor Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="server-configuration"><a class="header" href="#server-configuration">Server Configuration</a></h1>
+<p>This section discusses the options for compiling and running the server that can affect the database and how the code within it runs.</p>
+<h2 id="server-compilation-options"><a class="header" href="#server-compilation-options">Server Compilation Options</a></h2>
+<p>The following option values are specified (via #define) in the file <code>options.h</code> in the server sources. Except for those cases where property values on $server_options take precedence, these settings cannot be changed at runtime.</p>
+<p>This list is not intended to be exhaustive.
+Network Options</p>
+<div class="table-wrapper"><table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>
+<tr><td>NETWORK_PROTOCOL</td><td>This specifies the underlying protocol for the server to use for all connections and will be one of the following:<br> <code>NP_TCP</code> The server uses TCP/IP protocols. <br> <code>NP_LOCAL</code> The server uses local interprocess communication mechanisms (currently either BSD UNIX-domain sockets or SYSV named pipes).<br> <code>NP_SINGLE</code> The server accepts only a single <code>connection</code> via the standard input and output streams of the server itself. Attempts to have multiple simultaneous listening points (via listen() will likewise fail.</td></tr>
+<tr><td>DEFAULT_PORT</td><td>(for NP_TCP) the TCP port number on which the server listens when no port-number argument is given on the command line.</td></tr>
+<tr><td>DEFAULT_CONNECT_FILE</td><td>(for NP_LOCAL) the local filename through which the server will listen for connections when no connect-file-name is given on the command line.</td></tr>
+<tr><td>OUTBOUND_NETWORK</td><td>The server will include support for open_network_connection() if this constant is defined. If given a zero value, the function will be disabled by default and <code>-o</code> will need to be specified on the command line in order to enable it, otherwise (nonzero or blank value) the function is enabled by default and <code>-O</code> will needed to disable it. When disabled or not supported, open_network_connection() raises E_PERM whenever it is called. The NETWORK_PROTOCOL must be NP_TCP.</td></tr>
+<tr><td>MAX_QUEUED_OUTPUT</td><td>The maximum number of output characters the server is willing to buffer for any given network connection before discarding old output to make way for new. This can be overridden in-database by adding the property <code>$server_options.max_queued_output</code> and calling <code>load_server_options()</code>.</td></tr>
+<tr><td>MAX_QUEUED_INPUT</td><td>The maximum number of input characters the server is willing to buffer from any given network connection before it stops reading from the connection at all.</td></tr>
+<tr><td>IGNORE_PROP_PROTECTED</td><td>Disables protection of builtin properties via $server_options.protect_property when set. See section Protected Properties.</td></tr>
+<tr><td>OUT_OF_BAND_PREFIX</td><td>Specifies the out-of-band prefix. If this is defined as a non-empty string, then any lines of input from any player that begin with that prefix will not be consumed by reading tasks and will not undergo normal command parsing. See section Out-of-band Processing.</td></tr>
+<tr><td>OUT_OF_BAND_QUOTE_PREFIX</td><td>Specifies the out-of-band quoting prefix. If this is defined as a non-empty string, then any lines of input from any player that begin with that prefix will have that prefixed stripped and the resulting string will bypass Out-of-Band Processing.</td></tr>
+<tr><td>DEFAULT_MAX_STACK_DEPTH</td><td>Default value for $server_options.max_stack_depth.</td></tr>
+<tr><td>DEFAULT_FG_TICKS</td><td>The number of ticks allotted to foreground tasks. Default value for $server_options.fg_ticks.</td></tr>
+<tr><td>DEFAULT_BG_TICKS</td><td>The number of ticks allotted to background tasks. Default value for $server_options.bg_ticks.</td></tr>
+<tr><td>DEFAULT_FG_SECONDS</td><td>The number of seconds allotted to foreground tasks. Default value for $server_options.fg_seconds.</td></tr>
+<tr><td>DEFAULT_BG_SECONDS</td><td>The number of seconds allotted to background tasks. Default value for $server_options.bg_seconds.</td></tr>
+<tr><td>DEFAULT_CONNECT_TIMEOUT</td><td>Default value for $server_options.connect_timeout.</td></tr>
+<tr><td>LOG_CODE_CHANGES</td><td>Write to the log file who changed what verb code.</td></tr>
+<tr><td>USE_ANCESTOR_CACHE</td><td>Determine if the server should cache the ancestors of objects to improve performance of property lookups.</td></tr>
+<tr><td>OWNERSHIP_QUOTA</td><td>Control whether or not the server's default ownership quota management is enabled or not. It defaults to disabled to allow the database to handle quota on its own.</td></tr>
+<tr><td>UNSAFE_FIO</td><td>This allows you to skip the character by character line verification for a small performance boost. Make sure to read the disclaimer above it in options.h.</td></tr>
+<tr><td>LOG_EVALS</td><td>Allow all evals to be written to the server log.</td></tr>
+<tr><td>MEMO_STRLEN</td><td>Improve performance of string comparisons by using the pre-computed length of strings to rule out equality before doing a character by character comparison.</td></tr>
+<tr><td>NO_NAME_LOOKUP</td><td>When enabled, the server won't attempt to perform a DNS name lookup on any new connections.</td></tr>
+<tr><td>INCLUDE_RT_VARS</td><td>Allow for retrieval of runtime environment variables from a running task, unhandled exceptions or timeouts, and lagging tasks via <code>handle_uncaught_error</code>, <code>handle_task_timeout</code>, and <code>handle_lagging_task</code>, respectively. To control automatic inclusion of runtime environment variables, set the INCLUDE_RT_VARS server option. Variables will be added to the end of the stack frame as a map.</td></tr>
+<tr><td>PCRE_PATTERN_CACHE_SIZE</td><td>Specifies how many PCRE patterns are cached.</td></tr>
+<tr><td>SAFE_RECYCLE</td><td>Change ownership of everything an object owns before recycling it.</td></tr>
+<tr><td>DEFAULT_THREAD_MODE</td><td>Set the default thread mode for threaded functions.</td></tr>
+<tr><td>TOTAL_BACKGROUND_THREADS</td><td>Number of threads created at runtime.</td></tr>
+<tr><td>SAVE_FINISHED_TASKS</td><td>Enabled the <code>finished_tasks</code> function and define how many tasks get saved by default.</td></tr>
+<tr><td>DEFAULT_LAG_THRESHOLD</td><td>The number of seconds allowed before a task is considered laggy and triggers <code>#0:handle_lagging_task</code>.</td></tr>
+<tr><td>MAX_LINE_BYTES</td><td>Unceremoniously close connections that send lines exceeding this value to prevent memory allocation panics.</td></tr>
+<tr><td>ONLY_32_BITS</td><td>Switch from 64bits back to 32bits.</td></tr>
+<tr><td>CURL_TIMEOUT</td><td>Specify the maximum amount of time a CURL request can take before failing.</td></tr>
+</tbody></table>
+</div>
+<h2 id="running-the-server"><a class="header" href="#running-the-server">Running the Server</a></h2>
+<p>The server command line has the following general form:</p>
+<p><code>./moo [-e] [-f script-file] [-c script-line] [-l log-file] [-m] [-w waif-type] [-O|-o] [-4 ipv4-address] [-6 ipv6-address] [-r certificate-path] [-k key-path] [-i files-path] [-x executables-path] input-db-file output-db-file [-t|-p port-number]</code></p>
+<div class="table-wrapper"><table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>
+<tr><td>-v, --version</td><td>current version</td></tr>
+<tr><td>-h, --help</td><td>show usage information and command-line options</td></tr>
+<tr><td>-e, --emergency</td><td>emergency wizard mode</td></tr>
+<tr><td>-l, --log</td><td>redirect standard output to log file</td></tr>
+<tr><td>-m, --clear-move</td><td>clear the `last_move' builtin property on all objects</td></tr>
+<tr><td>-w, --waif-type</td><td>convert waifs from the specified type (check with typeof(waif) in your old MOO)</td></tr>
+<tr><td>-f, --start-script</td><td>file to load and pass to `#0:do_start_script()'</td></tr>
+<tr><td>-c, --start-line</td><td>line to pass to `#0:do_start_script()'</td></tr>
+<tr><td>-i, --file-dir</td><td>directory to look for files for use with FileIO functions</td></tr>
+<tr><td>-x, --exec-dir</td><td>directory to look for executables for use with the exec() function</td></tr>
+<tr><td>-o, --outbound</td><td>enable outbound network connections</td></tr>
+<tr><td>-O, --no-outbound</td><td>disable outbound network connections</td></tr>
+<tr><td>-4, --ipv4</td><td>restrict IPv4 listeners to a specific address</td></tr>
+<tr><td>-6, --ipv6</td><td>restrict IPv6 listeners to a specific address</td></tr>
+<tr><td>-r, --tls-cert</td><td>TLS certificate to use</td></tr>
+<tr><td>-k, --tls-key</td><td>TLS key to use</td></tr>
+<tr><td>-t, --tls-port</td><td>port to listen for TLS connections on (can be used multiple times)</td></tr>
+<tr><td>-p, --port</td><td>port to listen for connections on (can be used multiple times)</td></tr>
+</tbody></table>
+</div>
+<p>The emergency mode switch (-e) may not be used with either the file (-f) or line (-c) options.</p>
+<p>Both the file and line options may be specified. Their order on the command line determines the order of their invocation.</p>
+<p>Examples:
+./moo -c '$enable_debugging();' -f development.moo Minimal.db Minimal.db.new 7777
+./moo Minimal.db Minimal.db.new</p>
+<blockquote>
+<p>Note: A full list of arguments is now available by supplying <code>--help</code>.</p>
+</blockquote>
+<blockquote>
+<p>Note: For both the -c and -f arguments, the script content is passed in the args built-in variable. The server makes no assumptions about the semantics of the script; the interpretation of the script is the verb`s responsibility. Like Emergency Wizard Mode, the verb is called before starting any tasks or doing the initial listen to accept connections.</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../the-moo-programming-language/signals-to-the-server.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../legal.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../the-moo-programming-language/signals-to-the-server.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../legal.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/moo-syntax-highlight.js"></script>
+
+
+    </div>
+    </body>
+</html>
